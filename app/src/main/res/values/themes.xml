@@ -6,4 +6,12 @@
     </style>
 
     <style name="Theme.PersonalSchedule_xml" parent="Base.Theme.PersonalSchedule_xml" />
+
+    <style name="Theme.MyApp.FullScreenBottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.MyApp.FullScreenBottomSheet</item>
+    </style>
+
+    <style name="Widget.MyApp.FullScreenBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+    <item name="android:layout_height">match_parent</item>
+    </style>
 </resources>

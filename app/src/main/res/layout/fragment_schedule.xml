@@ -10,6 +10,8 @@
         android:id="@+id/calendarView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        app:cv_daySize="rectangle"
+        app:cv_outDateStyle="endOfRow"
         app:cv_dayViewResource="@layout/calendar_day_layout"
         app:cv_monthHeaderResource="@layout/calendar_month_header_layout"
         app:layout_constraintTop_toTopOf="parent"

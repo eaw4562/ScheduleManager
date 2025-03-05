@@ -7,4 +7,6 @@
     <string name="write">작성</string>
     <string name="noti">알림</string>
     <string name="settings">설정</string>
+    <string name="title">제목</string>
+    <string name="save">저장</string>
 </resources>

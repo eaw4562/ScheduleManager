@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -40,7 +41,7 @@ android {
     }
 
     buildFeatures{
-        //dataBinding = true
+        dataBinding = true
         viewBinding = true
         buildConfig = true
     }
@@ -71,4 +72,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.logging.interceptor)
     implementation("com.kizitonwose.calendar:view:2.6.0")
+    implementation ("com.google.android.material:material:1.9.0")
 }

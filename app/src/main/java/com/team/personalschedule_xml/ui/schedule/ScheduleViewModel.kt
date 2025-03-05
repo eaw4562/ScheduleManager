@@ -1,5 +1,6 @@
 package com.team.personalschedule_xml.ui.schedule
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,14 +23,17 @@ class ScheduleViewModel(private val repository: HolidayRepository) : ViewModel()
         viewModelScope.launch {
             val response = repository.getHolidays(year)
             val holidays: List<Holiday> = response?.response?.body?.items?.item ?: emptyList()
-            response?.response?.body?.items?.item ?: emptyList()
             val map = holidays.mapNotNull { holiday ->
-                DateUtil.parseLocdate(holiday.locdate)?.let { calendarDay ->
-                    // calendarDay.date가 java.util.Date라면 getTime()을 사용하여 밀리초 값을 얻습니다.
-                    val localDate = Instant.ofEpochMilli(calendarDay.date.getTime())
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
+                val holidayDateStr = holiday.locdate.toString() // 예: "20250101"
+                if (holidayDateStr.length == 8) {
+                    val year = holidayDateStr.substring(0, 4).toInt()
+                    val month = holidayDateStr.substring(4, 6).toInt()
+                    val day = holidayDateStr.substring(6, 8).toInt()
+                    // LocalDate.of()는 month가 1~12임에 주의
+                    val localDate = LocalDate.of(year, month, day)
                     localDate to holiday.dateName
+                } else {
+                    null
                 }
             }.toMap()
             _holidayMap.value = map
