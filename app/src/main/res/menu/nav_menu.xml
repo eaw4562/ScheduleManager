@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/scheduleFragment"
+        android:icon="@drawable/calendar_month"
+        android:title="@string/schedule"/>
+
+    <item
+        android:id="@+id/memoFragment"
+        android:icon="@drawable/note"
+        android:title="@string/memo"/>
+
+    <item
+        android:id="@+id/writeBottomSheet"
+        android:icon="@drawable/add_circle"
+        android:title="@string/write"/>
+
+    <item
+        android:id="@+id/notificationFragment"
+        android:icon="@drawable/notifications"
+        android:title="@string/noti"/>
+
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/settings"
+        android:title="@string/settings"/>
+</menu>

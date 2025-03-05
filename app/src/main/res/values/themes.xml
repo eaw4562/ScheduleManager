@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PersonalSchedule_xml" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.PersonalSchedule_xml" parent="Base.Theme.PersonalSchedule_xml" />
+
+    <style name="Theme.MyApp.FullScreenBottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.MyApp.FullScreenBottomSheet</item>
+    </style>
+
+    <style name="Widget.MyApp.FullScreenBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+    <item name="android:layout_height">match_parent</item>
+    </style>
+</resources>
