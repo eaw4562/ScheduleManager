@@ -70,7 +70,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showWriteBottomSheet() {
-        val bottomSheet = WriteBottomSheet()
-        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+        if (supportFragmentManager.findFragmentByTag("WriteBottomSheet") == null){
+            val bottomSheet = WriteBottomSheet()
+            bottomSheet.show(supportFragmentManager, "WriteBottomSheet")
+        }
     }
 }

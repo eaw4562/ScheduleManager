@@ -152,7 +152,9 @@
                     android:background="@drawable/bg_custom_text_button"
                     android:layout_gravity="center"
                     android:textSize="18sp"
-                    app:formatteDate="@{viewModel.selectedDate}" />
+                    android:layout_marginEnd="10dp"
+                    app:formatteDate="@{viewModel.selectedStartDate}"
+                    />
 
                 <TextView
                     android:id="@+id/write_bottom_start_time_text"
@@ -213,7 +215,9 @@
                     android:background="@drawable/bg_custom_text_button"
                     android:layout_gravity="center"
                     android:textSize="18sp"
-                    formatteDate="@{viewModel.selectedDate}"/>
+                    android:layout_marginEnd="10dp"
+                    formatteDate="@{viewModel.selectedEndDate}"
+                    />
 
                 <TextView
                     android:id="@+id/write_bottom_end_time_text"
@@ -225,16 +229,17 @@
                     formattedTime="@{viewModel.selectedTime}"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-
             <RelativeLayout
                 android:id="@+id/write_bottom_end_custom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <CalendarView
+                <com.kizitonwose.calendar.view.CalendarView
                     android:id="@+id/write_bottom_end_calendar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="300dp"
+                    app:cv_monthHeaderResource="@layout/calendar_month_header_layout"
+                    app:cv_dayViewResource="@layout/calendar_day_layout"
                     android:visibility="gone"/>
 
                 <TimePicker

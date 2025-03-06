@@ -111,14 +111,14 @@ class ScheduleFragment : Fragment() {
                     container.binding.tvDay.setBackgroundResource(R.drawable.current_day_curcle)
                     container.binding.tvDay.setTextColor(Color.WHITE)
                     // 만약 현재 날짜에 선택 배경도 적용하고 싶다면 (현재 날짜가 선택되었을 때)
-                    if (calendarViewModel.selectedDate.value == data.date) {
+                    if (calendarViewModel.selectedStartDate.value == data.date) {
                         container.binding.dayLayout.setBackgroundResource(R.drawable.selected_day_background)
                     } else {
                         container.binding.dayLayout.background = null
                     }
                 }
                 // 현재 날짜가 아니고 선택된 날짜인 경우: dayLayout에 selected_day_background 적용, tvDay의 배경은 초기화
-                else if (calendarViewModel.selectedDate.value == data.date) {
+                else if (calendarViewModel.selectedStartDate.value == data.date) {
                     container.binding.tvDay.background = null
                     container.binding.dayLayout.setBackgroundResource(R.drawable.selected_day_background)
                     container.binding.tvDay.setTextColor(Color.BLACK)
@@ -153,10 +153,10 @@ class ScheduleFragment : Fragment() {
 
                 // 클릭 시 ViewModel의 선택 상태 업데이트 (이후 전체 달력 셀 재바인딩)
                 container.view.setOnClickListener {
-                    if(calendarViewModel.selectedDate.value == data.date){
+                    if(calendarViewModel.selectedStartDate.value == data.date){
                         showBottomSheetFragment(data.date)
                     }else{
-                        calendarViewModel.selectDate(data.date)
+                        calendarViewModel.selectStartDate(data.date)
                     }
                     Log.d("CurrentDate", data.date.toString())
                 }
@@ -171,7 +171,7 @@ class ScheduleFragment : Fragment() {
 
 
         // ViewModel의 선택된 날짜 변화를 관찰하여 UI 업데이트 (필요 시)
-        calendarViewModel.selectedDate.observe(viewLifecycleOwner) { selectedDate ->
+        calendarViewModel.selectedStartDate.observe(viewLifecycleOwner) { selectedDate ->
             // 선택된 날짜가 변경되면 캘린더를 갱신하여 강조 표시 업데이트
             binding.calendarView.notifyCalendarChanged()
         }
