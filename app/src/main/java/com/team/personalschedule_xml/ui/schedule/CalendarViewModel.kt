@@ -3,6 +3,8 @@ package com.team.personalschedule_xml.ui.schedule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.team.personalschedule_xml.R
+import com.team.personalschedule_xml.data.model.CalendarLabel
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -23,6 +25,15 @@ class CalendarViewModel : ViewModel() {
 
     private val _selectedTime = MutableLiveData<LocalTime>(LocalTime.now())
     val selectedTime : LiveData<LocalTime> = _selectedTime
+
+    private val _selectedLabel = MutableLiveData<CalendarLabel>(
+        CalendarLabel(
+            color = R.color.emerald_green,  // 초기값
+            colorName = "에메랄드 그린",
+            isSelected = true
+        )
+    )
+    val selectedLabel: LiveData<CalendarLabel> = _selectedLabel
 
     /**
     * 시작 날짜를 선택할 때 호출됩니다.
@@ -76,5 +87,9 @@ class CalendarViewModel : ViewModel() {
 
     fun selectTime(time: LocalTime) {
         _selectedTime.value = time
+    }
+
+    fun selectLabel(label: CalendarLabel) {
+        _selectedLabel.value = label
     }
 }

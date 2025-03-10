@@ -85,28 +85,205 @@
         app:layout_constraintTop_toBottomOf="@+id/guid1">
 
         <LinearLayout
+            android:id="@+id/write_bottom_date_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/icons_24"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="종일"
+                        android:textSize="24sp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/write_bottom_allDay_switch"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="horizontal">
+
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="시작"
+                        android:textSize="24sp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/write_bottom_start_date_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_custom_text_button"
+                        android:layout_gravity="center"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="10dp"
+                        app:formatteDate="@{viewModel.selectedStartDate}"
+                        />
+
+                    <TextView
+                        android:id="@+id/write_bottom_start_time_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_custom_text_button"
+                        android:layout_gravity="center"
+                        android:textSize="18sp"
+                        app:formattedTime="@{viewModel.selectedTime}"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <RelativeLayout
+                    android:id="@+id/write_bottom_start_custom_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.kizitonwose.calendar.view.CalendarView
+                        android:id="@+id/write_bottom_start_calendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        app:cv_monthHeaderResource="@layout/calendar_month_header_layout"
+                        app:cv_dayViewResource="@layout/calendar_day_layout"
+                        android:visibility="gone"/>
+
+                    <TimePicker
+                        android:id="@+id/write_bottom_start_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:timePickerMode="spinner"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="종료"
+                        android:textSize="24sp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/write_bottom_end_date_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_custom_text_button"
+                        android:layout_gravity="center"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="10dp"
+                        formatteDate="@{viewModel.selectedEndDate}"
+                        />
+
+                    <TextView
+                        android:id="@+id/write_bottom_end_time_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_custom_text_button"
+                        android:layout_gravity="center"
+                        android:textSize="18sp"
+                        formattedTime="@{viewModel.selectedTime}"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <RelativeLayout
+                    android:id="@+id/write_bottom_end_custom_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.kizitonwose.calendar.view.CalendarView
+                        android:id="@+id/write_bottom_end_calendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        app:cv_monthHeaderResource="@layout/calendar_month_header_layout"
+                        app:cv_dayViewResource="@layout/calendar_day_layout"
+                        android:visibility="gone"/>
+
+                    <TimePicker
+                        android:id="@+id/write_bottom_end_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:timePickerMode="spinner"
+                        android:visibility="gone"/>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/guid2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray"
+                android:layout_marginTop="10dp"
+                />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/icons_24"/>
+                    android:background="@drawable/baseline_push_pin_24"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="종일"
+                    android:text="메모로 저장하기"
                     android:textSize="24sp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="10dp"/>
@@ -117,140 +294,52 @@
                     android:layout_weight="1"/>
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/write_bottom_allDay_switch"
+                    android:id="@+id/write_bottom_memo_switch"
                     android:layout_width="40dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <LinearLayout
+                android:id="@+id/bottom_write_label_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="35dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/baseline_color_lens_24"/>
 
                 <TextView
+                    android:id="@+id/labelNameText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="시작"
                     android:textSize="24sp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"/>
-
+                    android:layout_marginLeft="10dp"
+                    app:selectedLabelText="@{viewModel.selectedLabel}"/>
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
 
-                <TextView
-                    android:id="@+id/write_bottom_start_date_text"
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/write_bottom_color_img"
+                    android:layout_width="40dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/bg_custom_text_button"
-                    android:layout_gravity="center"
-                    android:textSize="18sp"
-                    android:layout_marginEnd="10dp"
-                    app:formatteDate="@{viewModel.selectedStartDate}"
-                    />
+                    android:background="@drawable/baseline_keyboard_arrow_right_24"
+                    android:layout_gravity="center"/>
 
-                <TextView
-                    android:id="@+id/write_bottom_start_time_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:background="@drawable/bg_custom_text_button"
-                    android:layout_gravity="center"
-                    android:textSize="18sp"
-                    app:formattedTime="@{viewModel.selectedTime}"/>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <RelativeLayout
-                android:id="@+id/write_bottom_start_custom_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.kizitonwose.calendar.view.CalendarView
-                    android:id="@+id/write_bottom_start_calendar"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    app:cv_monthHeaderResource="@layout/calendar_month_header_layout"
-                    app:cv_dayViewResource="@layout/calendar_day_layout"
-                    android:visibility="gone"/>
-
-                <TimePicker
-                    android:id="@+id/write_bottom_start_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:timePickerMode="spinner"
-                    android:visibility="gone"/>
-            </RelativeLayout>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="5dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="종료"
-                    android:textSize="24sp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <TextView
-                    android:id="@+id/write_bottom_end_date_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:background="@drawable/bg_custom_text_button"
-                    android:layout_gravity="center"
-                    android:textSize="18sp"
-                    android:layout_marginEnd="10dp"
-                    formatteDate="@{viewModel.selectedEndDate}"
-                    />
-
-                <TextView
-                    android:id="@+id/write_bottom_end_time_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:background="@drawable/bg_custom_text_button"
-                    android:layout_gravity="center"
-                    android:textSize="18sp"
-                    formattedTime="@{viewModel.selectedTime}"/>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-            <RelativeLayout
-                android:id="@+id/write_bottom_end_custom_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.kizitonwose.calendar.view.CalendarView
-                    android:id="@+id/write_bottom_end_calendar"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    app:cv_monthHeaderResource="@layout/calendar_month_header_layout"
-                    app:cv_dayViewResource="@layout/calendar_day_layout"
-                    android:visibility="gone"/>
-
-                <TimePicker
-                    android:id="@+id/write_bottom_end_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:timePickerMode="spinner"
-                    android:visibility="gone"/>
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
+
+
 
     </ScrollView>
 

@@ -179,6 +179,14 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
         binding.writeBottomEndTimeText.setOnClickListener {
             toggleView(binding.writeBottomEndTime)
         }
+
+        binding.bottomWriteLabelLayout.setOnClickListener {
+            // "ColorPickerBottomSheet" 태그로 이미 프래그먼트가 추가되어 있는지 확인
+            if (childFragmentManager.findFragmentByTag("ColorPickerBottomSheet") == null) {
+                val colorPicker = ColorPickerBottomSheet()
+                colorPicker.show(childFragmentManager, "ColorPickerBottomSheet")
+            }
+        }
     }
 
     override fun onStart() {
