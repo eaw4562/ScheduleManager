@@ -187,6 +187,13 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
                 colorPicker.show(childFragmentManager, "ColorPickerBottomSheet")
             }
         }
+
+        binding.bottomWriteAlarmLayout.setOnClickListener {
+            if (childFragmentManager.findFragmentByTag("AlarmBottomSheet") == null) {
+                val alarmSheet = AlarmBottomSheet()
+                alarmSheet.show(childFragmentManager, "AlarmBottomSheet")
+            }
+        }
     }
 
     override fun onStart() {

@@ -13,5 +13,7 @@
 
     <style name="Widget.MyApp.FullScreenBottomSheet" parent="Widget.Design.BottomSheet.Modal">
     <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/bottom_sheet_background</item>
     </style>
+
 </resources>

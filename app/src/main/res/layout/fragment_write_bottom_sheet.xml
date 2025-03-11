@@ -88,7 +88,7 @@
             android:id="@+id/write_bottom_date_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -120,18 +120,22 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"/>
 
                     <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/write_bottom_allDay_switch"
                         android:layout_width="40dp"
-                        android:layout_height="30dp"
+                        android:layout_height="40dp"
+                        android:paddingStart="5dp"
                         android:layout_gravity="center"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:layout_marginLeft="35dp"
                     android:layout_marginRight="5dp"
                     android:orientation="horizontal">
@@ -197,6 +201,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:layout_marginLeft="35dp"
                     android:layout_marginRight="5dp"
                     android:orientation="horizontal">
@@ -266,47 +271,47 @@
                 android:layout_marginTop="10dp"
                 />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <!--<androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/baseline_push_pin_24"/>
+                    android:background="@drawable/baseline_push_pin_24" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="메모로 저장하기"
-                    android:textSize="24sp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:text="메모로 저장하기"
+                    android:textSize="24sp" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/write_bottom_memo_switch"
                     android:layout_width="40dp"
                     android:layout_height="30dp"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center" />
             </androidx.appcompat.widget.LinearLayoutCompat>
-
+-->
             <LinearLayout
                 android:id="@+id/bottom_write_label_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -321,7 +326,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     app:selectedLabelText="@{viewModel.selectedLabel}"/>
                 <View
                     android:layout_width="0dp"
@@ -334,6 +339,87 @@
                     android:layout_height="30dp"
                     android:background="@drawable/baseline_keyboard_arrow_right_24"
                     android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottom_write_alarm_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/baseline_access_alarm_24"/>
+
+                <TextView
+                    android:id="@+id/alarm_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:layout_gravity="center"
+                    android:text="알림 없음"
+                    android:layout_marginStart="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottom_write_memo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/baseline_text_snippet_24"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:text="메모"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/write_bottom_memo_close_img"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/baseline_cancel_24"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/memo_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textSize="14sp"
+                    tools:text="테스트"
+                    android:background="@drawable/memo_radius"/>
+
 
             </LinearLayout>
 
