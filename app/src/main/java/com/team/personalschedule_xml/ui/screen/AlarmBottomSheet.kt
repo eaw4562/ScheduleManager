@@ -1,5 +1,6 @@
 package com.team.personalschedule_xml.ui.screen
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,6 +28,8 @@ class AlarmBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAlarmBottomSheetBinding.inflate(inflater, container, false)
+        binding.viewModel = calendarViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -44,9 +47,27 @@ class AlarmBottomSheet : BottomSheetDialogFragment() {
             updateAlarmMessage()
         }
 
-        binding.alarmOneHourBottomCheck.setOnClickListener {
+        binding.alarmOneHourBottomLayout.setOnClickListener {
             binding.alarmOneHourBottomCheck.isChecked = !binding.alarmOneHourBottomCheck.isChecked
             updateAlarmMessage()
+        }
+
+        // Observer를 통해 체크박스 상태를 UI에 반영
+        calendarViewModel.alarmStartEnabled.observe(viewLifecycleOwner) { isChecked ->
+            binding.alarmStartBottomCheck.isChecked = isChecked
+            updateAlarmMessage()
+        }
+        calendarViewModel.alarmTenMinuteEnabled.observe(viewLifecycleOwner) { isChecked ->
+            binding.alarmTenMinuteBottomCheck.isChecked = isChecked
+            updateAlarmMessage()
+        }
+        calendarViewModel.alarmOneHourEnabled.observe(viewLifecycleOwner) { isChecked ->
+            binding.alarmOneHourBottomCheck.isChecked = isChecked
+            updateAlarmMessage()
+        }
+
+        calendarViewModel.alarmText.observe(viewLifecycleOwner) { text ->
+            binding.alarmBottomTitleTextView.text = text
         }
     }
 
@@ -55,11 +76,17 @@ class AlarmBottomSheet : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        // dismiss 시 최종 메시지 업데이트
+        calendarViewModel.updateAlarmText() // ViewModel 내에서 LiveData를 업데이트하도록 수정할 수 있음.
+    }
+
     // 메시지 업데이트 함수
     private fun updateAlarmMessage() {
         val sb = StringBuilder()
 
-        // 순서는 항상 "시작", "10분 전", "1시간 전"
+        // 순서는 항상 "시작", "10분 전", "1시간 전"x
         if (binding.alarmStartBottomCheck.isChecked) {
             sb.append("시작")
         }
@@ -77,5 +104,10 @@ class AlarmBottomSheet : BottomSheetDialogFragment() {
             sb.append("알림이 설정되어 있지 않습니다.")
         }
         binding.alarmBottomTitleTextView.text = sb.toString()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

@@ -23,8 +23,16 @@ class CalendarViewModel : ViewModel() {
 
     private var endDateDeltaDays : Long = 0
 
-    private val _selectedTime = MutableLiveData<LocalTime>(LocalTime.now())
-    val selectedTime : LiveData<LocalTime> = _selectedTime
+    private val _selectedStartTime = MutableLiveData<LocalTime>(LocalTime.now())
+    val selectedStartTime : LiveData<LocalTime> = _selectedStartTime
+
+    // 초기 종료 시간은 시작 시간보다 1시간 뒤1
+    private val _selectedEndTime = MutableLiveData<LocalTime>(LocalTime.now().plusHours(1))
+    val selectedEndTime : LiveData<LocalTime> = _selectedEndTime
+
+    // 종료 시간 동기화 여부 및 시간 차이(시간 단위)
+    private var isEndTimeAutoSync = true
+    private var endTimeDeltaHours : Long = 1
 
     private val _selectedLabel = MutableLiveData<CalendarLabel>(
         CalendarLabel(
@@ -34,6 +42,16 @@ class CalendarViewModel : ViewModel() {
         )
     )
     val selectedLabel: LiveData<CalendarLabel> = _selectedLabel
+
+    // 알림 체크 상태를 저장하는 LiveData (초기값 false)
+    val alarmStartEnabled = MutableLiveData<Boolean>(false)
+    val alarmTenMinuteEnabled = MutableLiveData<Boolean>(false)
+    val alarmOneHourEnabled = MutableLiveData<Boolean>(false)
+
+    // 알림 텍스트 (초기값 "알림 없음")
+    private val _alarmText = MutableLiveData<String>("알림 없음")
+    val alarmText: LiveData<String> get() = _alarmText
+
 
     /**
     * 시작 날짜를 선택할 때 호출됩니다.
@@ -85,11 +103,40 @@ class CalendarViewModel : ViewModel() {
         endDateDeltaDays = 0
     }
 
-    fun selectTime(time: LocalTime) {
-        _selectedTime.value = time
+    fun selectStartTime(newStartTime : LocalTime) {
+        _selectedStartTime.value = newStartTime
+        if (isEndTimeAutoSync) {
+            _selectedStartTime.value = newStartTime.plusHours(endTimeDeltaHours)
+        }
+    }
+
+    fun selectEndTime(newEndTime : LocalTime) {
+        _selectedEndTime.value = newEndTime
+        isEndTimeAutoSync = false
+        _selectedStartTime.value?.let { startTime ->
+            endTimeDeltaHours = ChronoUnit.HOURS.between(startTime, newEndTime)
+        }
+    }
+
+    fun enableEndTimeAutoSync() {
+        isEndDateAutoSync = true
+        _selectedEndTime.value = _selectedStartTime.value?.plusHours(endTimeDeltaHours)
+            ?: LocalTime.now().plusHours(1)
     }
 
     fun selectLabel(label: CalendarLabel) {
         _selectedLabel.value = label
+    }
+
+    fun updateAlarmText() {
+        val selected = mutableListOf<String>()
+        if (alarmStartEnabled.value == true) selected.add("시작")
+        if (alarmTenMinuteEnabled.value == true) selected.add("10분 전")
+        if (alarmOneHourEnabled.value == true) selected.add("1시간 전")
+        _alarmText.value = if (selected.isEmpty()) {
+            "알림 없음"
+        } else {
+            selected.joinToString(separator = ", ") + " 알림이 설정되어 있습니다"
+        }
     }
 }

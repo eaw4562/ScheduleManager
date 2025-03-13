@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kizitonwose.calendar.core.CalendarDay
@@ -14,10 +16,13 @@ import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.team.personalschedule_xml.R
+import com.team.personalschedule_xml.data.model.Schedule
+import com.team.personalschedule_xml.data.model.ScheduleRepository
 import com.team.personalschedule_xml.databinding.FragmentWriteBottomSheetBinding
 import com.team.personalschedule_xml.ui.schedule.CalendarViewModel
 import com.team.personalschedule_xml.utils.DayViewContainer
 import com.team.personalschedule_xml.utils.MonthHeaderViewContainer
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -29,6 +34,8 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
 
     private val calendarViewModel: CalendarViewModel by activityViewModels()
 
+    private lateinit var scheduleRepository: ScheduleRepository
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -36,7 +43,8 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
         binding.viewModel = calendarViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        Log.d("WriteBottomStart", "초기값" + calendarViewModel.selectedStartDate.value)
+        scheduleRepository = ScheduleRepository(requireContext())
+
         return binding.root
     }
 
@@ -133,24 +141,6 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-
-
-
-        /*dayBinder = object : MonthDayBinder<DayViewContainer> {
-            override fun bind(container: DayViewContainer, data: CalendarDay) {
-               if(calendarViewModel.selectedDate.value == data.date){
-                   container.binding.tvDay.setBackgroundResource(R.drawable.current_day_curcle)
-               }else{
-                   container.binding.tvDay.background = null
-               }
-            }
-
-            override fun create(view: View): DayViewContainer {
-                return DayViewContainer(view)
-            }
-
-        }*/
-
         calendarViewModel.selectedStartDate.observe(viewLifecycleOwner) {
             binding.writeBottomStartCalendar.notifyCalendarChanged()
             Log.d("WriteBottom", "Calendar Value" + calendarViewModel.selectedStartDate.value)
@@ -194,7 +184,67 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
                 alarmSheet.show(childFragmentManager, "AlarmBottomSheet")
             }
         }
+
+        binding.writeBottomMemoCloseImg.setOnClickListener {
+            binding.memoText.text?.clear()
+        }
+        binding.writeBottomCloseIBtn.setOnClickListener {
+            dialog?.dismiss()
+        }
+
+        binding.writeBottomSaveText.setOnClickListener {
+            Log.d("WriteBottomSheet", "Click")
+            saveScheduleToDb()
+        }
+
     }
+
+    private fun saveScheduleToDb() {
+        Log.d("WriteBottomSheet", "saveScheduleToDb() called")
+        val title = binding.writeBottomTitleEdit.text.toString()
+        val isAllDay = binding.writeBottomAllDaySwitch.isChecked
+        val startDate = calendarViewModel.selectedStartDate.value
+        val endDate = calendarViewModel.selectedEndDate.value
+
+        val startTime = if(!isAllDay) calendarViewModel.selectedStartTime.value else null
+        val endTime = if(!isAllDay) calendarViewModel.selectedEndTime.value else null
+
+        // ISO-8601 문자열로 변환 (간단하게 LocalDate.toString(), LocalTime.toString() 사용)
+        val startDateTime = if (!isAllDay && startDate != null && startTime != null)
+            "${startDate}T${startTime}" else startDate?.toString() ?: ""
+        val endDateTime = if (!isAllDay && endDate != null && endTime != null)
+            "${endDate}T${endTime}" else endDate?.toString() ?: ""
+
+        val labelColor = calendarViewModel.selectedLabel.value?.color ?: 0
+        val labelName = calendarViewModel.selectedLabel.value?.colorName ?: ""
+        val alarm = calendarViewModel.alarmText.value ?: ""
+
+        val memo = binding.memoText.text.toString()
+
+        val schedule = Schedule(
+            title = title,
+            isAllDay = isAllDay,
+            startDateTime = startDateTime,
+            endDateTime = endDateTime,
+            labelColor = labelColor,
+            labelName = labelName,
+            alarm = alarm,
+            memo = memo
+        )
+
+        lifecycleScope.launch {
+            Log.d("TEST", "Inside coroutine")
+            try {
+                scheduleRepository.insertSchedule(schedule)
+                Log.d("WriteBottomSheet", "Schedule saved: $schedule")
+                dismiss()  // 저장 후 바텀시트 dismiss
+            }catch (e :Exception) {
+                Log.e("WriteBottomSheet", "Error saving schedule", e)
+            }
+        }
+    }
+
+
 
     override fun onStart() {
         super.onStart()

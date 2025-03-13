@@ -25,7 +25,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_margin="20dp"
             android:orientation="horizontal">
 
             <ImageButton
@@ -173,7 +173,7 @@
                         android:background="@drawable/bg_custom_text_button"
                         android:layout_gravity="center"
                         android:textSize="18sp"
-                        app:formattedTime="@{viewModel.selectedTime}"/>
+                        app:formattedTime="@{viewModel.selectedStartTime}"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -237,7 +237,7 @@
                         android:background="@drawable/bg_custom_text_button"
                         android:layout_gravity="center"
                         android:textSize="18sp"
-                        formattedTime="@{viewModel.selectedTime}"/>
+                        formattedTime="@{viewModel.selectedEndTime}"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <RelativeLayout
@@ -363,7 +363,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
                     android:layout_gravity="center"
-                    android:text="알림 없음"
+                    android:text="@{viewModel.alarmText}"
                     android:layout_marginStart="10dp" />
 
             </LinearLayout>
@@ -405,12 +405,13 @@
                         android:id="@+id/write_bottom_memo_close_img"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        app:visibleIfNotEmpty="@{memoText.text.toString()}"
                         android:background="@drawable/baseline_cancel_24"
                         android:layout_gravity="center"/>
 
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/memo_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

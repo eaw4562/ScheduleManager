@@ -1,6 +1,8 @@
 package com.team.personalschedule_xml.utils
 
 import android.util.Log
+import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -42,4 +44,9 @@ fun setSelectedLabelText(textView: TextView, label: CalendarLabel?) {
         textView.text = ""
         textView.background = null
     }
+}
+
+@BindingAdapter("visibleIfNotEmpty")
+fun setVisibleIfNotEmpty(view: View, text: String?) {
+    view.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
 }
