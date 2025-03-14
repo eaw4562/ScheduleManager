@@ -13,7 +13,11 @@ class ScheduleRepository(context : Context) {
 
     private val scheduleDao = db.scheduleDao()
 
-    suspend fun insertSchedule(schedule: Schedule) {
-        scheduleDao.insertSchedule(schedule)
+    suspend fun insertSchedule(schedule: Schedule): Long {
+        return scheduleDao.insertSchedule(schedule)
+    }
+
+    suspend fun getAllSchedules(): List<Schedule> {
+        return scheduleDao.getAllSchedules()
     }
 }

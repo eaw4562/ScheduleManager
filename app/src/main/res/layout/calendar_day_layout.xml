@@ -16,12 +16,12 @@
         android:gravity="center"
         android:textColor="@android:color/black" />
 
-    <!-- 날짜 하단의 라벨 (동적으로 추가/삭제) -->
-    <TextView
-        android:id="@+id/tvLabel"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/scheduleContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:paddingTop="4dp">
+
+    </LinearLayout>z
 </LinearLayout>

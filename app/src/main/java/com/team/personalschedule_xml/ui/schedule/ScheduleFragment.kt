@@ -2,11 +2,15 @@ package com.team.personalschedule_xml.ui.schedule
 
 import android.graphics.Color
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -42,6 +46,10 @@ class ScheduleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentScheduleBinding.inflate(inflater, container, false)
+
+        calendarViewModel.initRepository(requireContext())
+        calendarViewModel.loadSchedules()
+
         return binding.root
     }
 
@@ -106,6 +114,11 @@ class ScheduleFragment : Fragment() {
                 container.day = data
                 container.binding.tvDay.text = data.date.dayOfMonth.toString()
 
+                container.binding.scheduleContainer.removeAllViews()
+
+                // 마진을 dp 단위로 지정하고 픽셀로 변환 (예: 상하 4dp)
+                val marginInPx = (4 * container.view.context.resources.displayMetrics.density).toInt()
+
                 // 현재 날짜인 경우: tvDay와 dayLayout 모두에 current_day_curcle 적용
                 if (data.date == LocalDate.now()) {
                     container.binding.tvDay.setBackgroundResource(R.drawable.current_day_curcle)
@@ -144,11 +157,59 @@ class ScheduleFragment : Fragment() {
 
                 //Log.d("ScheduleFragment", "Binding lookup date: $key, holiday: $holidayName")
 
-                if (holidayName != null) {
-                    container.binding.tvLabel.visibility = View.VISIBLE
-                    container.binding.tvLabel.text = holidayName
-                } else {
-                    container.binding.tvLabel.visibility = View.GONE
+                if (!holidayName.isNullOrEmpty()) {
+                    // 공휴일이 있으면 별도의 TextView로 추가
+                    val holidayTextView = TextView(container.view.context).apply {
+                        text = holidayName
+                        textSize = 12f
+                        setTextColor(Color.WHITE)
+                        setBackgroundColor(Color.RED) // 필요에 따라 drawable이나 다른 색상 적용
+                        setPadding(4, 2, 4, 2)
+                        // 한 줄로 표시하고, 텍스트가 길면 말줄임 처리
+                        maxLines = 1
+                        ellipsize = TextUtils.TruncateAt.END
+                    }
+
+                    val lp = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    lp.setMargins(0,marginInPx,0,marginInPx)
+                    holidayTextView.layoutParams = lp
+
+                    container.binding.scheduleContainer.addView(holidayTextView)
+                }
+
+                // 2. 해당 날짜에 저장된 스케줄들 처리 (calendarViewModel의 scheduleMap 사용)
+                val schedulesForDay = calendarViewModel.scheduleMap.value?.get(data.date)
+                if (!schedulesForDay.isNullOrEmpty()) {
+                    schedulesForDay.forEach { schedule ->
+                        val scheduleTextView = TextView(container.view.context).apply {
+                            text = schedule.title
+                            textSize = 12f
+                            setTextColor(Color.WHITE)
+                            // labelColor는 리소스 ID이므로 ContextCompat를 사용해 실제 색상으로 변환
+                            setBackgroundColor(
+                                androidx.core.content.ContextCompat.getColor(
+                                    container.view.context,
+                                    schedule.labelColor
+                                )
+                            )
+                            setPadding(4, 2, 4, 2)
+
+                            // 한 줄로 표시하고, 텍스트가 길면 말줄임 처리
+                            maxLines = 1
+                            ellipsize = TextUtils.TruncateAt.END
+                        }
+                        val lp = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        )
+                        lp.setMargins(0, marginInPx, 0, marginInPx)
+                        scheduleTextView.layoutParams = lp
+
+                        container.binding.scheduleContainer.addView(scheduleTextView)
+                    }
                 }
 
                 // 클릭 시 ViewModel의 선택 상태 업데이트 (이후 전체 달력 셀 재바인딩)
@@ -173,6 +234,12 @@ class ScheduleFragment : Fragment() {
         // ViewModel의 선택된 날짜 변화를 관찰하여 UI 업데이트 (필요 시)
         calendarViewModel.selectedStartDate.observe(viewLifecycleOwner) { selectedDate ->
             // 선택된 날짜가 변경되면 캘린더를 갱신하여 강조 표시 업데이트
+            binding.calendarView.notifyCalendarChanged()
+        }
+
+        // scheduleMap이 변경되면 달력을 갱신하여 UI 업데이트
+        calendarViewModel.scheduleMap.observe(viewLifecycleOwner) {
+            Log.d("ScheduleFragment", "ScheduleMap observer triggered: $it")
             binding.calendarView.notifyCalendarChanged()
         }
     }

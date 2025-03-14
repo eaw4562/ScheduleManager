@@ -1,10 +1,16 @@
 package com.team.personalschedule_xml.ui.schedule
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.CalendarLabel
+import com.team.personalschedule_xml.data.model.Schedule
+import com.team.personalschedule_xml.data.model.ScheduleRepository
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -51,6 +57,28 @@ class CalendarViewModel : ViewModel() {
     // 알림 텍스트 (초기값 "알림 없음")
     private val _alarmText = MutableLiveData<String>("알림 없음")
     val alarmText: LiveData<String> get() = _alarmText
+
+    private val _scheduleMap = MutableLiveData<Map<LocalDate, List<Schedule>>>(emptyMap())
+    val scheduleMap : LiveData<Map<LocalDate, List<Schedule>>> = _scheduleMap
+
+    //Todo - DI
+    private lateinit var repository: ScheduleRepository
+
+    fun initRepository(context : Context) {
+        repository = ScheduleRepository(context)
+    }
+
+    fun loadSchedules() {
+        viewModelScope.launch {
+            val scheduleList = repository.getAllSchedules()
+            Log.d("CalendarViewModel", "Loaded schedules: ${scheduleList.size}")
+            val map = scheduleList.groupBy { schedule ->
+                LocalDate.parse(schedule.startDateTime.substringBefore("T"))
+            }
+            _scheduleMap.value = map
+            Log.d("CalendarViewModel", "ScheduleMap updated: $_scheduleMap")
+        }
+    }
 
 
     /**
@@ -103,12 +131,14 @@ class CalendarViewModel : ViewModel() {
         endDateDeltaDays = 0
     }
 
-    fun selectStartTime(newStartTime : LocalTime) {
+    fun selectStartTime(newStartTime: LocalTime) {
         _selectedStartTime.value = newStartTime
         if (isEndTimeAutoSync) {
-            _selectedStartTime.value = newStartTime.plusHours(endTimeDeltaHours)
+            // 종료 시간은 시작 시간 + 기존 시간 차이
+            _selectedEndTime.value = newStartTime.plusHours(endTimeDeltaHours)
         }
     }
+
 
     fun selectEndTime(newEndTime : LocalTime) {
         _selectedEndTime.value = newEndTime
