@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -12,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.team.personalschedule_xml"
-        minSdk = 34
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -73,6 +74,7 @@ dependencies {
     implementation(libs.gsonConverter)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.logging.interceptor)
+
     implementation("com.kizitonwose.calendar:view:2.6.0")
     implementation ("com.google.android.material:material:1.9.0")
 

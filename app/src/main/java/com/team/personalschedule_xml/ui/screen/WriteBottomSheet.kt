@@ -22,7 +22,9 @@ import com.team.personalschedule_xml.databinding.FragmentWriteBottomSheetBinding
 import com.team.personalschedule_xml.ui.schedule.CalendarViewModel
 import com.team.personalschedule_xml.utils.DayViewContainer
 import com.team.personalschedule_xml.utils.MonthHeaderViewContainer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -237,7 +239,10 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
             try {
                 scheduleRepository.insertSchedule(schedule)
                 Log.d("WriteBottomSheet", "Schedule saved: $schedule")
-                dismiss()  // 저장 후 바텀시트 dismiss
+                withContext(Dispatchers.Main) {
+                    calendarViewModel.loadSchedules()
+                    dismiss()  // 저장 후 바텀시트 dismiss
+                }
             }catch (e :Exception) {
                 Log.e("WriteBottomSheet", "Error saving schedule", e)
             }

@@ -36,6 +36,7 @@ class CalendarViewModel : ViewModel() {
     private val _selectedEndTime = MutableLiveData<LocalTime>(LocalTime.now().plusHours(1))
     val selectedEndTime : LiveData<LocalTime> = _selectedEndTime
 
+
     // 종료 시간 동기화 여부 및 시간 차이(시간 단위)
     private var isEndTimeAutoSync = true
     private var endTimeDeltaHours : Long = 1

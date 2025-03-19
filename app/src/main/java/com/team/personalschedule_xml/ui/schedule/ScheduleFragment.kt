@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -245,8 +246,10 @@ class ScheduleFragment : Fragment() {
     }
 
     private fun showBottomSheetFragment(data: LocalDate) {
-        val bottomSheet = ScheduleBottomSheetFragment.newInstance(data)
-        bottomSheet.show(childFragmentManager, "ScheduleBottomSheetFragment")
+        val action = ScheduleFragmentDirections.actionScheduleFragmentToScheduleBottomSheetFragment(
+            selectedDate = data.toString()
+        )
+        findNavController().navigate(action)
         Log.d("showBottomSheetFragment", "BottomSheet tag: ScheduleBottomSheetFragment")
     }
 

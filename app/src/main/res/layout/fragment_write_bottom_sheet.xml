@@ -227,7 +227,7 @@
                         android:layout_gravity="center"
                         android:textSize="18sp"
                         android:layout_marginEnd="10dp"
-                        formatteDate="@{viewModel.selectedEndDate}"
+                        app:formatteDate="@{viewModel.selectedEndDate}"
                         />
 
                     <TextView
@@ -237,7 +237,7 @@
                         android:background="@drawable/bg_custom_text_button"
                         android:layout_gravity="center"
                         android:textSize="18sp"
-                        formattedTime="@{viewModel.selectedEndTime}"/>
+                        app:formattedTime="@{viewModel.selectedEndTime}"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <RelativeLayout
