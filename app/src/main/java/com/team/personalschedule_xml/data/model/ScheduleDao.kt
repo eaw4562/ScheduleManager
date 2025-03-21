@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ScheduleDao {
@@ -12,4 +13,7 @@ interface ScheduleDao {
 
     @Query("SELECT * FROM SCHEDULE")
     suspend fun getAllSchedules() : List<Schedule>
+
+    @Update
+    suspend fun updateSchedule(schedule: Schedule)
 }

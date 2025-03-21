@@ -1,3 +1,4 @@
+/*
 package com.team.personalschedule_xml.ui.screen
 
 import android.os.Bundle
@@ -6,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kizitonwose.calendar.core.CalendarDay
@@ -29,7 +32,7 @@ import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
-class WriteBottomSheet : BottomSheetDialogFragment() {
+class WriteBottomSheet : Fragment() {
 
     private var _binding : FragmentWriteBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -191,7 +194,7 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
             binding.memoText.text?.clear()
         }
         binding.writeBottomCloseIBtn.setOnClickListener {
-            dialog?.dismiss()
+            findNavController().popBackStack()
         }
 
         binding.writeBottomSaveText.setOnClickListener {
@@ -241,7 +244,7 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
                 Log.d("WriteBottomSheet", "Schedule saved: $schedule")
                 withContext(Dispatchers.Main) {
                     calendarViewModel.loadSchedules()
-                    dismiss()  // 저장 후 바텀시트 dismiss
+                    findNavController().popBackStack()
                 }
             }catch (e :Exception) {
                 Log.e("WriteBottomSheet", "Error saving schedule", e)
@@ -251,7 +254,8 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
 
 
 
-    override fun onStart() {
+    */
+/*override fun onStart() {
         super.onStart()
         dialog?.let { d ->
             val bottomSheet = d.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -262,6 +266,11 @@ class WriteBottomSheet : BottomSheetDialogFragment() {
                 behavior.skipCollapsed = true
             }
         }
+    }*//*
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
 
@@ -284,4 +293,4 @@ private fun toggleView(view: View) {
             }
             .start()
     }
-}
+}*/

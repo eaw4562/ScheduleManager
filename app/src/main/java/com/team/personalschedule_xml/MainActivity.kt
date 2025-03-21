@@ -1,5 +1,8 @@
 package com.team.personalschedule_xml
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +13,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.team.personalschedule_xml.databinding.ActivityMainBinding
-import com.team.personalschedule_xml.ui.screen.WriteBottomSheet
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         initNavigation()
+        createNotificationChannel()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         val navController = navHostFragment.navController
@@ -44,8 +47,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.writeBottomSheet -> {
-                    showWriteBottomSheet()
-                    false // 프래그먼트 교체가 아니므로 false 반환
+                    navController.navigate(R.id.writeFragment)
+                    true
                 }
                 R.id.notificationFragment -> {
                     navController.navigate(R.id.notificationFragment)
@@ -69,10 +72,22 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(binding.navBar, findNavController(R.id.nav_host))
     }
 
-    private fun showWriteBottomSheet() {
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "schedule_channel",
+                "Schedule Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    /*private fun showWriteBottomSheet() {
         if (supportFragmentManager.findFragmentByTag("WriteBottomSheet") == null){
             val bottomSheet = WriteBottomSheet()
             bottomSheet.show(supportFragmentManager, "WriteBottomSheet")
         }
-    }
+    }*/
 }

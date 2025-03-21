@@ -17,6 +17,11 @@ class ScheduleRepository(context : Context) {
         return scheduleDao.insertSchedule(schedule)
     }
 
+    suspend fun updateSchedule(schedule: Schedule) {
+        scheduleDao.updateSchedule(schedule
+        )
+    }
+
     suspend fun getAllSchedules(): List<Schedule> {
         return scheduleDao.getAllSchedules()
     }

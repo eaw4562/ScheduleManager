@@ -16,7 +16,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.databinding.FragmentScheduleBottomSheetFragmentBinding
-import com.team.personalschedule_xml.ui.screen.WriteBottomSheet
 import com.team.personalschedule_xml.utils.ScheduleItemAdapter
 import java.time.LocalDate
 
@@ -128,8 +127,7 @@ class ScheduleBottomSheetFragment : Fragment() {
         }
 
         binding.scheduleBottomAddIbtn.setOnClickListener {
-            val bottomSheet = WriteBottomSheet()
-            bottomSheet.show(childFragmentManager, "WriteBottomSheet")
+            findNavController().navigate(R.id.action_scheduleBottomSheetFragment_to_writeFragment)
         }
 
     }

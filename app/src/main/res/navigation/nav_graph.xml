@@ -38,17 +38,36 @@
         tools:layout="@layout/fragment_settings"/>
 
     <fragment
+        android:id="@+id/writeFragment"
+        android:name="com.team.personalschedule_xml.ui.screen.WriteFragment"
+        android:label="WriteFragment"
+        tools:layout="@layout/fragment_write">
+        <argument
+            android:name="scheduleId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </fragment>
+    <fragment
         android:id="@+id/scheduleBottomSheetFragment"
         android:name="com.team.personalschedule_xml.ui.schedule.ScheduleBottomSheetFragment">
         <argument
             android:name="selectedDate"
             app:argType="string"/>
         <action
+            android:id="@+id/action_scheduleBottomSheetFragment_to_writeFragment"
+            app:destination="@id/writeFragment">
+            <argument
+                android:name="scheduleId"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </action>
+        <action
             android:id="@+id/action_scheduleBottomSheetFragment_to_scheduleDetailFragment"
             app:destination="@id/scheduleDetailFragment">
             <argument
                 android:name="scheduleId"
-                app:argType="integer"/>
+                app:argType="integer"
+                android:defaultValue="-1"/> <!-- 편집이 아닌 새로 추가 시 -1로 구분 -->
         </action>
     </fragment>
 
@@ -58,5 +77,13 @@
         <argument
             android:name="scheduleId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_scheduleDetailFragment_to_writeFragment"
+            app:destination="@id/writeFragment">
+            <argument
+                android:name="scheduleId"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </action>
     </fragment>
 </navigation>

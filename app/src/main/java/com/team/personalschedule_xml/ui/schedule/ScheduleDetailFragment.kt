@@ -6,7 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.databinding.FragmentScheduleDetailBinding
 
@@ -54,7 +57,39 @@ class ScheduleDetailFragment : Fragment() {
         calendarViewModel.scheduleMap.observe(viewLifecycleOwner) { scheduleMap ->
             schedule = scheduleMap?.values?.flatten()?.find { it.id == scheduleId }
             binding.schedule = schedule
+            if (schedule == null) {
+                Log.e("ScheduleDetailSheet", "Schedule not found for ID: $scheduleId")
+            }
         }
-        val schedule = calendarViewModel.scheduleMap.value?.values?.flatten()?.find { it.id == scheduleId }
+        binding.scheduleDetailMoreIBtn.setOnClickListener { view ->
+            showPopupMenu(view)
+        }
+    }
+
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(requireContext(), view)
+        popupMenu.menuInflater.inflate(R.menu.detail_more_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_edit -> {
+                    val action = ScheduleDetailFragmentDirections
+                        .actionScheduleDetailFragmentToWriteFragment(scheduleId)
+                    findNavController().navigate(action)
+                    true
+                }
+
+                R.id.action_share -> {
+                    true
+                }
+
+                R.id.action_delete -> {
+                    findNavController().popBackStack()
+                    true
+                }
+
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 }

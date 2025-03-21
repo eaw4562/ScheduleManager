@@ -38,7 +38,7 @@ class CalendarViewModel : ViewModel() {
 
 
     // 종료 시간 동기화 여부 및 시간 차이(시간 단위)
-    private var isEndTimeAutoSync = true
+    public var isEndTimeAutoSync = true
     private var endTimeDeltaHours : Long = 1
 
     private val _selectedLabel = MutableLiveData<CalendarLabel>(
@@ -137,6 +137,9 @@ class CalendarViewModel : ViewModel() {
         if (isEndTimeAutoSync) {
             // 종료 시간은 시작 시간 + 기존 시간 차이
             _selectedEndTime.value = newStartTime.plusHours(endTimeDeltaHours)
+            Log.d("CalendarViewModel", "StartTime: $newStartTime, EndTime synced: ${_selectedEndTime.value}")
+        }else {
+            Log.d("CalendarViewModel", "StartTime: $newStartTime, Sync skipped, isEndTimeAutoSync: $isEndTimeAutoSync")
         }
     }
 
@@ -147,16 +150,43 @@ class CalendarViewModel : ViewModel() {
         _selectedStartTime.value?.let { startTime ->
             endTimeDeltaHours = ChronoUnit.HOURS.between(startTime, newEndTime)
         }
+        Log.d("CalendarViewModel", "EndTime set manually: $newEndTime, Sync disabled")
     }
 
     fun enableEndTimeAutoSync() {
-        isEndDateAutoSync = true
+        isEndTimeAutoSync = true
         _selectedEndTime.value = _selectedStartTime.value?.plusHours(endTimeDeltaHours)
             ?: LocalTime.now().plusHours(1)
+        Log.d("CalendarViewModel", "EndTime auto-sync enabled: ${_selectedEndTime.value}")
+    }
+
+    fun resetForNewSchedule() {
+        _selectedStartDate.value = LocalDate.now()
+        _selectedEndDate.value = LocalDate.now()
+        isEndDateAutoSync = true
+        endDateDeltaDays = 0
+        _selectedStartTime.value = LocalTime.now()
+        _selectedEndTime.value = LocalTime.now().plusHours(1)
+        isEndTimeAutoSync = true
+        endTimeDeltaHours = 1
+        _selectedLabel.value = CalendarLabel(R.color.emerald_green, "에메랄드 그린", true)
+        alarmStartEnabled.value = false
+        alarmTenMinuteEnabled.value = false
+        alarmOneHourEnabled.value = false
+        _alarmText.value = "알림 없음"
+        Log.d("CalendarViewModel", "Reset for new schedule")
     }
 
     fun selectLabel(label: CalendarLabel) {
         _selectedLabel.value = label
+    }
+
+    fun setLabel(color : Int, colorName : String) {
+        _selectedLabel.value = CalendarLabel(color, colorName)
+    }
+
+    fun setAlarm(alarm: String) {
+        _alarmText.value = alarm
     }
 
     fun updateAlarmText() {
