@@ -9,7 +9,7 @@
         android:id="@+id/scheduleFragment"
         android:name="com.team.personalschedule_xml.ui.schedule.ScheduleFragment"
         android:label="ScheduleFragment"
-        tools:layout="@layout/fragment_schedule">
+        tools:layout="@layout/layout_schedule">
         <action
             android:id="@+id/action_scheduleFragment_to_scheduleBottomSheetFragment"
             app:destination="@id/scheduleBottomSheetFragment">
@@ -21,32 +21,33 @@
 
     <fragment
         android:id="@+id/memoFragment"
-        android:name="com.team.personalschedule_xml.ui.screen.MemoFragment"
+        android:name="com.team.personalschedule_xml.ui.memo.MemoFragment"
         android:label="MemoFragment"
-        tools:layout="@layout/fragment_memo"/>
+        tools:layout="@layout/layout_memo"/>
 
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.team.personalschedule_xml.ui.screen.NotificationFragment"
+        android:name="com.team.personalschedule_xml.ui.notification.NotificationFragment"
         android:label="NotificationFragment"
-        tools:layout="@layout/fragment_notification"/>
+        tools:layout="@layout/layout_notification"/>
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.team.personalschedule_xml.ui.screen.SettingsFragment"
+        android:name="com.team.personalschedule_xml.ui.settings.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@layout/layout_settings"/>
 
     <fragment
         android:id="@+id/writeFragment"
-        android:name="com.team.personalschedule_xml.ui.screen.WriteFragment"
+        android:name="com.team.personalschedule_xml.ui.write.WriteFragment"
         android:label="WriteFragment"
-        tools:layout="@layout/fragment_write">
+        tools:layout="@layout/layout_write">
         <argument
             android:name="scheduleId"
             app:argType="integer"
             android:defaultValue="-1"/>
     </fragment>
+
     <fragment
         android:id="@+id/scheduleBottomSheetFragment"
         android:name="com.team.personalschedule_xml.ui.schedule.ScheduleBottomSheetFragment">
@@ -67,7 +68,7 @@
             <argument
                 android:name="scheduleId"
                 app:argType="integer"
-                android:defaultValue="-1"/> <!-- 편집이 아닌 새로 추가 시 -1로 구분 -->
+                android:defaultValue="-1"/>
         </action>
     </fragment>
 
@@ -85,5 +86,14 @@
                 app:argType="integer"
                 android:defaultValue="-1"/>
         </action>
+        <action
+            android:id="@+id/action_scheduleDetailFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment"
+            app:popUpTo="@id/scheduleFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
+
+    <action
+        android:id="@+id/action_global_scheduleDetailFragment"
+        app:destination="@id/scheduleDetailFragment" />
 </navigation>

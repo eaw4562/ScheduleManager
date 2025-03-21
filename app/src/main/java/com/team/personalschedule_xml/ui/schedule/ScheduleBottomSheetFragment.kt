@@ -1,6 +1,5 @@
 package com.team.personalschedule_xml.ui.schedule
 
-import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,17 +10,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.Schedule
-import com.team.personalschedule_xml.databinding.FragmentScheduleBottomSheetFragmentBinding
-import com.team.personalschedule_xml.utils.ScheduleItemAdapter
+import com.team.personalschedule_xml.databinding.LayoutScheduleBottomSheetBinding
+import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
 import java.time.LocalDate
 
 class ScheduleBottomSheetFragment : Fragment() {
 
-    private var _binding: FragmentScheduleBottomSheetFragmentBinding? = null
+    private var _binding: LayoutScheduleBottomSheetBinding? = null
     private val binding get() = _binding!!
 
     private val calendarViewModel : CalendarViewModel by activityViewModels()
@@ -70,7 +67,7 @@ class ScheduleBottomSheetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         Log.d("BottomSheet", "show")
-        _binding = FragmentScheduleBottomSheetFragmentBinding.inflate(inflater, container, false)
+        _binding = LayoutScheduleBottomSheetBinding.inflate(inflater, container, false)
 
         binding.viewModel = calendarViewModel
         binding.lifecycleOwner = viewLifecycleOwner

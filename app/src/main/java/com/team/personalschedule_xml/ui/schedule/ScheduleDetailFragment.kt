@@ -6,63 +6,77 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.Schedule
-import com.team.personalschedule_xml.databinding.FragmentScheduleDetailBinding
+import com.team.personalschedule_xml.data.repository.ScheduleRepository
+import com.team.personalschedule_xml.databinding.LayoutScheduleDetailBinding
+import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ScheduleDetailFragment : Fragment() {
 
-    private var _binding : FragmentScheduleDetailBinding? = null
+    private var _binding: LayoutScheduleDetailBinding? = null
     private val binding get() = _binding!!
 
-    private var schedule: Schedule? = null
-    private val calendarViewModel : CalendarViewModel by activityViewModels()
-
-    private var scheduleId : Int = 0
-
-    /*companion object {
-        private const val ARG_SCHEDULE_ID = "arg_schedule_id"
-        fun newInstance(scheduleId: Int): ScheduleDetailFragment {
-            val fragment = ScheduleDetailFragment()
-            val args = Bundle()
-            args.putInt(ARG_SCHEDULE_ID, scheduleId)
-            fragment.arguments = args
-            return fragment
-        }
-    }*/
+    private val calendarViewModel: CalendarViewModel by activityViewModels()
+    private lateinit var scheduleRepository: ScheduleRepository
+    private var scheduleId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scheduleId = ScheduleDetailFragmentArgs.fromBundle(requireArguments()).scheduleId
-        Log.d("ScheduleDetailSheet", "Schedule ID: $scheduleId")
-
+        Log.d("ScheduleDetailFragment", "Schedule ID: $scheduleId")
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentScheduleDetailBinding.inflate(inflater, container, false)
-       binding.lifecycleOwner = viewLifecycleOwner
+        _binding = LayoutScheduleDetailBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        scheduleRepository = ScheduleRepository(requireContext())
 
-       return binding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        calendarViewModel.scheduleMap.observe(viewLifecycleOwner) { scheduleMap ->
-            schedule = scheduleMap?.values?.flatten()?.find { it.id == scheduleId }
-            binding.schedule = schedule
-            if (schedule == null) {
-                Log.e("ScheduleDetailSheet", "Schedule not found for ID: $scheduleId")
-            }
+
+        if (scheduleId != -1) {
+            loadScheduleDetails()
+        } else {
+            Toast.makeText(requireContext(), "유효하지 않은 일정입니다.", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
         }
+
         binding.scheduleDetailMoreIBtn.setOnClickListener { view ->
             showPopupMenu(view)
+        }
+
+        binding.scheduleDetailBackIBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
+
+    private fun loadScheduleDetails() {
+        lifecycleScope.launch {
+            val schedule = scheduleRepository.getScheduleById(scheduleId)
+            if (schedule != null) {
+                binding.schedule = schedule
+                Log.d("ScheduleDetailFragment", "Loaded schedule: ${schedule.title}")
+            } else {
+                Log.e("ScheduleDetailFragment", "Schedule not found for ID: $scheduleId")
+                Toast.makeText(requireContext(), "일정을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
+                findNavController().popBackStack()
+            }
         }
     }
 
@@ -79,11 +93,18 @@ class ScheduleDetailFragment : Fragment() {
                 }
 
                 R.id.action_share -> {
+                    // 공유 기능 구현
                     true
                 }
 
                 R.id.action_delete -> {
-                    findNavController().popBackStack()
+                    lifecycleScope.launch {
+                        scheduleRepository.deleteSchedule(scheduleId)
+                        calendarViewModel.loadSchedules()
+                        withContext(Dispatchers.Main) {
+                            findNavController().popBackStack()
+                        }
+                    }
                     true
                 }
 
@@ -91,5 +112,10 @@ class ScheduleDetailFragment : Fragment() {
             }
         }
         popupMenu.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

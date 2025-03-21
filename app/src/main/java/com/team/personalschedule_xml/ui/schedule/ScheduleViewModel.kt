@@ -1,18 +1,13 @@
 package com.team.personalschedule_xml.ui.schedule
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.personalschedule_xml.data.model.Holiday
-import com.team.personalschedule_xml.repository.HolidayRepository
-import com.team.personalschedule_xml.utils.DateUtil
+import com.team.personalschedule_xml.data.repository.HolidayRepository
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
-import java.util.Date
 
 class ScheduleViewModel(private val repository: HolidayRepository) : ViewModel() {
 

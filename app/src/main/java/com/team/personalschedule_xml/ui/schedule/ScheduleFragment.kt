@@ -10,33 +10,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.kizitonwose.calendar.core.CalendarMonth
-import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
-import com.kizitonwose.calendar.view.DaySize
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.team.personalschedule_xml.R
-import com.team.personalschedule_xml.databinding.FragmentScheduleBinding
-import com.team.personalschedule_xml.repository.HolidayRepository
-import com.team.personalschedule_xml.utils.DayViewContainer
-import com.team.personalschedule_xml.utils.MonthHeaderViewContainer
-import java.time.DayOfWeek
+import com.team.personalschedule_xml.databinding.LayoutScheduleBinding
+import com.team.personalschedule_xml.data.repository.HolidayRepository
+import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
+import com.team.personalschedule_xml.ui.common.viewmodel.ScheduleViewModelFactory
+import com.team.personalschedule_xml.ui.common.calendar.DayViewContainer
+import com.team.personalschedule_xml.ui.common.calendar.MonthHeaderViewContainer
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.Date
 
 class ScheduleFragment : Fragment() {
 
-    private var _binding: FragmentScheduleBinding? = null
+    private var _binding: LayoutScheduleBinding? = null
     private val binding get() = _binding!!
 
     private val calendarViewModel: CalendarViewModel by activityViewModels()
@@ -46,7 +41,7 @@ class ScheduleFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentScheduleBinding.inflate(inflater, container, false)
+        _binding = LayoutScheduleBinding.inflate(inflater, container, false)
 
         calendarViewModel.initRepository(requireContext())
         calendarViewModel.loadSchedules()
