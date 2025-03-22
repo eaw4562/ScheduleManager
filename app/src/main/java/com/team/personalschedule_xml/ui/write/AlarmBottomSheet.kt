@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.team.personalschedule_xml.databinding.LayoutAlarmBottomSheetBinding
 import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
+import com.team.personalschedule_xml.utils.constants.AlarmConstants
 
 class AlarmBottomSheet : BottomSheetDialogFragment() {
     private var _binding : LayoutAlarmBottomSheetBinding? = null
@@ -82,15 +83,15 @@ class AlarmBottomSheet : BottomSheetDialogFragment() {
 
         // 순서는 항상 "시작", "10분 전", "1시간 전"x
         if (binding.alarmStartBottomCheck.isChecked) {
-            sb.append("시작")
+            sb.append(AlarmConstants.AT_START)
         }
         if (binding.alarmTenMinuteBottomCheck.isChecked) {
             if (sb.isNotEmpty()) sb.append(", ")
-            sb.append("10분 전")
+            sb.append(AlarmConstants.TEN_MINUTES_BEFORE)
         }
         if (binding.alarmOneHourBottomCheck.isChecked) {
             if (sb.isNotEmpty()) sb.append(", ")
-            sb.append("1시간 전")
+            sb.append(AlarmConstants.ONE_HOUR_BEFORE)
         }
         if (sb.isNotEmpty()) {
             sb.append("에 알림이 도착합니다.")

@@ -10,6 +10,7 @@ import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.CalendarLabel
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.data.repository.ScheduleRepository
+import com.team.personalschedule_xml.utils.constants.AlarmConstants
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -56,7 +57,7 @@ class CalendarViewModel : ViewModel() {
     val alarmOneHourEnabled = MutableLiveData<Boolean>(false)
 
     // 알림 텍스트 (초기값 "알림 없음")
-    private val _alarmText = MutableLiveData<String>("알림 없음")
+    private val _alarmText = MutableLiveData<String>(AlarmConstants.NO_ALARM)
     val alarmText: LiveData<String> get() = _alarmText
 
     private val _scheduleMap = MutableLiveData<Map<LocalDate, List<Schedule>>>(emptyMap())
@@ -78,6 +79,30 @@ class CalendarViewModel : ViewModel() {
             }
             _scheduleMap.value = map
             Log.d("CalendarViewModel", "ScheduleMap updated: $_scheduleMap")
+        }
+    }
+
+    fun copyScheduleToDate(schedule: Schedule, dates : List<LocalDate>, onComplete : () -> Unit) {
+        viewModelScope.launch {
+            dates.forEach { date ->
+                val newSchedule = schedule.copy(
+                    id = 0,
+                    startDateTime = replaceDate(schedule.startDateTime, date),
+                    endDateTime = replaceDate(schedule.endDateTime, date)
+                )
+                repository.insertSchedule(newSchedule)
+            }
+            loadSchedules()
+            onComplete()
+        }
+    }
+
+    private fun replaceDate(originalDateTime : String, newDate: LocalDate) : String {
+        return if (originalDateTime.contains("T")) {
+            val timePart = originalDateTime.substringAfter("T")
+            "${newDate}T$timePart"
+        } else {
+            newDate.toString()
         }
     }
 
@@ -173,7 +198,7 @@ class CalendarViewModel : ViewModel() {
         alarmStartEnabled.value = false
         alarmTenMinuteEnabled.value = false
         alarmOneHourEnabled.value = false
-        _alarmText.value = "알림 없음"
+        _alarmText.value = AlarmConstants.NO_ALARM
         Log.d("CalendarViewModel", "Reset for new schedule")
     }
 
@@ -191,11 +216,11 @@ class CalendarViewModel : ViewModel() {
 
     fun updateAlarmText() {
         val selected = mutableListOf<String>()
-        if (alarmStartEnabled.value == true) selected.add("시작")
-        if (alarmTenMinuteEnabled.value == true) selected.add("10분 전")
-        if (alarmOneHourEnabled.value == true) selected.add("1시간 전")
+        if (alarmStartEnabled.value == true) selected.add(AlarmConstants.AT_START)
+        if (alarmTenMinuteEnabled.value == true) selected.add(AlarmConstants.TEN_MINUTES_BEFORE)
+        if (alarmOneHourEnabled.value == true) selected.add(AlarmConstants.ONE_HOUR_BEFORE)
         _alarmText.value = if (selected.isEmpty()) {
-            "알림 없음"
+            AlarmConstants.NO_ALARM
         } else {
             selected.joinToString(separator = ", ") + " 알림이 설정되어 있습니다"
         }

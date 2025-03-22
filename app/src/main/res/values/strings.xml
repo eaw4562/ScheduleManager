@@ -9,4 +9,8 @@
     <string name="settings">설정</string>
     <string name="title">제목</string>
     <string name="save">저장</string>
+
+    <string name="alarm_condition_start">시작</string>
+    <string name="alarm_condition_ten_minutes_before">10분 전</string>
+    <string name="alarm_condition_one_hour_before">1시간 전</string>
 </resources>

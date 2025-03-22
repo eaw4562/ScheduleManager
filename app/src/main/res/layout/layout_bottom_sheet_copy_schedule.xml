@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="일정 복사"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <com.kizitonwose.calendar.view.CalendarView
+            android:id="@+id/copyCalendarView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@id/titleTextView"
+            app:cv_monthHeaderResource="@layout/layout_calendar_month_header"
+            app:cv_dayViewResource="@layout/layout_calendar_day"
+            android:visibility="visible"/>
+        <Button
+            android:id="@+id/copyDatesButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="선택한 날짜에 일정 복사하기"/>
+    </RelativeLayout>
+</layout>

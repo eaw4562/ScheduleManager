@@ -94,6 +94,15 @@ class ScheduleDetailFragment : Fragment() {
 
                 R.id.action_share -> {
                     // 공유 기능 구현
+                    lifecycleScope.launch {
+                        val schedule = scheduleRepository.getScheduleById(scheduleId)
+                        schedule?.let {
+                            val bottomSheet = CopyScheduleBottomSheet(it) {
+
+                            }
+                            bottomSheet.show(parentFragmentManager, "CopyScheduleBottomSheet")
+                        }
+                    }
                     true
                 }
 

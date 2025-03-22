@@ -373,9 +373,9 @@ class WriteFragment : Fragment() {
                     calendarViewModel.loadSchedules()
                     if (alarm.isNotBlank()) {
                         val alarmConditions = alarm.split(",").map { it.trim() }
-                        cancelExistingAlarms(newId, alarmConditions)
+                        //cancelExistingAlarms(newId, alarmConditions)
                     }
-                    scheduleAlarms(newId, schedule) //알림 예약
+                    //scheduleAlarms(newId, schedule) //알림 예약
                     findNavController().popBackStack()
                 }
             } catch (e: Exception) {
@@ -384,7 +384,7 @@ class WriteFragment : Fragment() {
         }
     }
 
-    private fun scheduleAlarms(scheduleId : Int, schedule: Schedule) {
+    /*private fun scheduleAlarms(scheduleId : Int, schedule: Schedule) {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (schedule.startDateTime.isBlank()) {
             Log.e("WriteFragment", "startDateTime is empty")
@@ -463,7 +463,7 @@ class WriteFragment : Fragment() {
             )
             alarmManager.cancel(pendingIntent)
         }
-    }
+    }*/
 
     private fun toggleView(view: View) {
         if (view.visibility == View.GONE) {
