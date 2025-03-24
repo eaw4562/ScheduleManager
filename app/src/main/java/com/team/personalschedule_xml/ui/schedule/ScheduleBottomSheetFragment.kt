@@ -40,26 +40,12 @@ class ScheduleBottomSheetFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val args = ScheduleBottomSheetFragmentArgs.fromBundle(requireArguments())
         selectedDate = LocalDate.parse(args.selectedDate)
-      /*  arguments?.getString(ARG_DATE)?.let {
-            selectedDate = LocalDate.parse(it)
-        }*/
-        Log.d("ScheduleBottomSheet", "Selected date : $selectedDate")
-    }
 
-   /* override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = BottomSheetDialog(requireContext())
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheet = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                it.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.skipCollapsed = true
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        }
-            return dialog
-    }*/
+        /*  arguments?.getString(ARG_DATE)?.let {
+              selectedDate = LocalDate.parse(it)
+          }*/
+        Log.d(">>>>>>>>>>>>>>>", "Selected date : $selectedDate")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +58,6 @@ class ScheduleBottomSheetFragment : Fragment() {
         binding.viewModel = calendarViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        calendarViewModel.initRepository(requireContext())
         calendarViewModel.loadSchedules()
 
         return binding.root
@@ -124,7 +109,13 @@ class ScheduleBottomSheetFragment : Fragment() {
         }
 
         binding.scheduleBottomAddIbtn.setOnClickListener {
-            findNavController().navigate(R.id.action_scheduleBottomSheetFragment_to_writeFragment)
+            val action = ScheduleBottomSheetFragmentDirections
+                .actionScheduleBottomSheetFragmentToWriteFragment(
+                    scheduleId = -1,
+                    selectedDate.toString())
+            Log.d(">>>>>>>>>>>>>>>", "전달값" + selectedDate.toString())
+            //calendarViewModel.selectStartDate(selectedDate)
+            findNavController().navigate(action)
         }
 
     }
@@ -136,19 +127,8 @@ class ScheduleBottomSheetFragment : Fragment() {
         Log.d("ScheduleBottomSheet", "Navigating with schedule id: ${schedule.id}")
     }
 
-
-
-    override fun onStart() {
-        super.onStart()
-        /*dialog?.let { d ->
-            val bottomSheet = d.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                it.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-                val behavior = BottomSheetBehavior.from(it)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.skipCollapsed = true
-            }
-        }*/
+    override fun onResume() {
+        super.onResume()
+        calendarViewModel.loadSchedules()
     }
-
 }

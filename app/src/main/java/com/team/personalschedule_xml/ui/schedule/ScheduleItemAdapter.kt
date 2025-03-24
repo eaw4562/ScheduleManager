@@ -35,13 +35,13 @@ class ScheduleItemAdapter(
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
         val schedule = scheduleList[position]
 
-        val startLdt = LocalDateTime.parse(schedule.startDateTime)
-        val endLdt = LocalDateTime.parse(schedule.endDateTime)
+        val startLdt = schedule.startDateTime
+        val endLdt =schedule.endDateTime
 
         val formatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
 
-        holder.startDateTextView.text = startLdt.format(formatter)
-        holder.endDateTextView.text = endLdt.format(formatter)
+        holder.startDateTextView.text = startLdt?.format(formatter)
+        holder.endDateTextView.text = endLdt?.format(formatter)
         holder.colorImageView.setBackgroundColor(
             ContextCompat.getColor(holder.itemView.context, schedule.labelColor)
         )

@@ -70,35 +70,11 @@ fun setTextColorFromResource(textView: TextView, colorRes: Int) {
 
 
 @BindingAdapter("formattedMoreDetailDate")
-fun setFormattedMoreDetailDate(textView: TextView, dateTimeString: String?) {
-    if (dateTimeString.isNullOrEmpty()) {
-        textView.text = ""
-        return
-    }
-    try {
-        val localDateTime = LocalDateTime.parse(dateTimeString)
-        val localDate = localDateTime.toLocalDate()
-        // "yyyy. M. d (E)" 형식 예: "2025. 3. 19 (수)"
-        val formatter = DateTimeFormatter.ofPattern("yyyy. M. d (E)", Locale.KOREAN)
-        textView.text = localDate.format(formatter)
-    } catch (e: Exception) {
-        textView.text = ""
-    }
+fun setFormattedMoreDetailDate(textView: TextView, dateTime: LocalDateTime?) {
+    textView.text = dateTime?.format(DateTimeFormatter.ofPattern("yyyy. M. d (E)", Locale.KOREAN)) ?: ""
 }
 
 @BindingAdapter("formattedMoreDetailTime")
-fun setFormattedMoreDetailTime(textView: TextView, dateTimeString: String?) {
-    if (dateTimeString.isNullOrEmpty()) {
-        textView.text = ""
-        return
-    }
-    try {
-        val localDateTime = LocalDateTime.parse(dateTimeString)
-        val localTime = localDateTime.toLocalTime()
-        // "a h:mm" 형식 예: "오후 1:00"
-        val formatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
-        textView.text = localTime.format(formatter)
-    } catch (e: Exception) {
-        textView.text = ""
-    }
+fun setFormattedMoreDetailTime(textView: TextView, dateTime: LocalDateTime?) {
+    textView.text = dateTime?.format(DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)) ?: ""
 }

@@ -29,7 +29,16 @@
         android:id="@+id/notificationFragment"
         android:name="com.team.personalschedule_xml.ui.notification.NotificationFragment"
         android:label="NotificationFragment"
-        tools:layout="@layout/layout_notification"/>
+        tools:layout="@layout/layout_notification">
+        <action
+            android:id="@+id/action_notificationFragment_to_scheduleDetailFragment"
+            app:destination="@id/scheduleDetailFragment">
+            <argument
+                android:name="scheduleId"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -46,6 +55,11 @@
             android:name="scheduleId"
             app:argType="integer"
             android:defaultValue="-1"/>
+        <argument
+            android:name="selectedDate"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
     </fragment>
 
     <fragment
@@ -61,6 +75,11 @@
                 android:name="scheduleId"
                 app:argType="integer"
                 android:defaultValue="-1"/>
+            <argument
+                android:name="selectedDate"
+                app:argType="string"
+                android:defaultValue="@null"
+                app:nullable="true"/>
         </action>
         <action
             android:id="@+id/action_scheduleBottomSheetFragment_to_scheduleDetailFragment"

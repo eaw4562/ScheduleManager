@@ -1,10 +1,15 @@
 package com.team.personalschedule_xml.ui.schedule
 
+import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kizitonwose.calendar.core.CalendarDay
@@ -45,6 +50,7 @@ class CopyScheduleBottomSheet(
     ): View? {
         _binding = LayoutBottomSheetCopyScheduleBinding.inflate(inflater, container, false)
         scheduleRepository = ScheduleRepository(requireContext())
+        calendarViewModel.loadScheduleColorsMap()
         return binding.root
     }
 
@@ -83,15 +89,22 @@ class CopyScheduleBottomSheet(
 
         }
 
+        val colorsMap = mutableMapOf<LocalDate, List<Int>>()
+
+        calendarViewModel.scheduleColorsMap.observe(viewLifecycleOwner) { newColorsMap ->
+            colorsMap.clear()
+            colorsMap.putAll(newColorsMap)
+            binding.copyCalendarView.notifyCalendarChanged()
+        }
+
         binding.copyCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.binding.tvDay.text = data.date.dayOfMonth.toString()
-
                 if (data.position == DayPosition.MonthDate) {
                     container.view.setOnClickListener {
                         if (selectedDates.contains(data.date)) {
                             selectedDates.remove(data.date)
-                            container.binding.tvDay.background = null
+                            container.binding.dayLayout.background = null
                         } else {
                             selectedDates.add(data.date)
                             container.binding.dayLayout.setBackgroundResource(R.drawable.selected_day_background)
@@ -104,6 +117,31 @@ class CopyScheduleBottomSheet(
                     } else {
                         container.binding.dayLayout.background = null
                     }
+
+                    fun Context.dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
+
+                    val colors = colorsMap[data.date] ?: emptyList()
+                    val dotsContainer = container.binding.dotsContainer
+                    dotsContainer.removeAllViews()
+
+                    val maxDots = 5
+                    val dotSize = requireContext().dpToPx(8)
+                    val dotMargin = requireContext().dpToPx(2)
+
+                    colors.take(maxDots).forEach { colorRes ->
+                        val dot = View(requireContext()).apply {
+                            val params = LinearLayoutCompat.LayoutParams(dotSize, dotSize).apply {
+                                setMargins(dotMargin, 0, dotMargin, 0)  // 좌우 마진 설정
+                            }
+                            layoutParams = params
+                            background = ContextCompat.getDrawable(requireContext(), R.drawable.circle_dot)?.mutate()
+                            background.setTint(ContextCompat.getColor(requireContext(), colorRes))
+                        }
+                        dotsContainer.addView(dot)
+                    }
+                    dotsContainer.gravity = Gravity.CENTER  // dotsContainer 자체를 중앙으로 정렬
+
+
                 } else {
                     container.binding.tvDay.alpha = 0.3f
                     container.view.setOnClickListener(null)

@@ -8,6 +8,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.room.Room
 import com.team.personalschedule_xml.data.db.ScheduleDatabase
+import com.team.personalschedule_xml.data.model.ActionType
+import com.team.personalschedule_xml.data.model.Notification
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.utils.constants.AlarmConstants
 import com.team.personalschedule_xml.utils.receiver.AlarmReceiver
@@ -20,12 +22,30 @@ class ScheduleRepository(private val context : Context) {
         context.applicationContext,
         ScheduleDatabase::class.java,
         "schedule_database"
-    ).build()
+    )
+        .fallbackToDestructiveMigration()
+        .build()
 
     private val scheduleDao = db.scheduleDao()
+    private val notificationDao = db.notificationDao()
 
-    suspend fun insertSchedule(schedule: Schedule): Long {
+    suspend fun getAllNotifications(): List<Notification> {
+        return notificationDao.getAllNotifications()
+    }
+
+    suspend fun insertSchedule(schedule: Schedule, actionType: ActionType = ActionType.CREATED): Long {
         val id = scheduleDao.insertSchedule(schedule)
+
+        notificationDao.insertNotification(
+            Notification(
+                scheduleId = id.toInt(),
+                title =  schedule.title,
+                labelColor = schedule.labelColor,
+                startDateTime = schedule.startDateTime,
+                endDateTime = schedule.endDateTime,
+                actionType = actionType
+            )
+        )
 
         if (schedule.alarm.isNotBlank() && schedule.alarm != AlarmConstants.NO_ALARM) {
             scheduleAlarms(id.toInt(), schedule) // 명확히 조건 추가
@@ -35,11 +55,22 @@ class ScheduleRepository(private val context : Context) {
         return id
     }
 
-    suspend fun updateSchedule(schedule: Schedule) {
+    suspend fun updateSchedule(schedule: Schedule, actionType: ActionType = ActionType.UPDATED) {
         scheduleDao.updateSchedule(schedule)
 
         //업데이트 전 기존 알림 취소
         cancelAlarms(schedule.id)
+
+        notificationDao.insertNotification(
+            Notification(
+                scheduleId = schedule.id,
+                title =  schedule.title,
+                labelColor = schedule.labelColor,
+                startDateTime = schedule.startDateTime,
+                endDateTime = schedule.endDateTime,
+                actionType = actionType
+            )
+        )
 
         if (schedule.alarm.isNotBlank() && schedule.alarm != AlarmConstants.NO_ALARM) {
             scheduleAlarms(schedule.id, schedule)
@@ -67,16 +98,12 @@ class ScheduleRepository(private val context : Context) {
     @SuppressLint("ScheduleExactAlarm")
     private fun scheduleAlarms(scheduleId : Int, schedule: Schedule) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (schedule.startDateTime.isBlank()) {
+        if (schedule.startDateTime == null) {
             Log.e("ScheduleRepository", "startDateTime is empty")
             return
         }
 
-        val startDateTime = if (schedule.startDateTime.contains("T")) {
-            LocalDateTime.parse(schedule.startDateTime)
-        } else {
-            LocalDate.parse(schedule.startDateTime).atStartOfDay()
-        }
+        val startDateTime = schedule.startDateTime ?: return
 
         val alarmConditions = schedule.alarm.split(",").map { it.trim() }
         alarmConditions.forEach { condition ->

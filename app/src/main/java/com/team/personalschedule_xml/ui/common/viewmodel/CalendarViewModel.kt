@@ -1,7 +1,9 @@
 package com.team.personalschedule_xml.ui.common.viewmodel
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,10 +15,11 @@ import com.team.personalschedule_xml.data.repository.ScheduleRepository
 import com.team.personalschedule_xml.utils.constants.AlarmConstants
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-class CalendarViewModel : ViewModel() {
+class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     // 시작 날짜
     private val _selectedStartDate = MutableLiveData<LocalDate>(LocalDate.now())
     val selectedStartDate: LiveData<LocalDate> = _selectedStartDate
@@ -63,20 +66,37 @@ class CalendarViewModel : ViewModel() {
     private val _scheduleMap = MutableLiveData<Map<LocalDate, List<Schedule>>>(emptyMap())
     val scheduleMap : LiveData<Map<LocalDate, List<Schedule>>> = _scheduleMap
 
-    //Todo - DI
-    private lateinit var repository: ScheduleRepository
+    val scheduleColorsMap = MutableLiveData<Map<LocalDate, List<Int>>>(emptyMap())
 
-    fun initRepository(context : Context) {
-        repository = ScheduleRepository(context)
+    fun loadScheduleColorsMap() {
+        viewModelScope.launch {
+            val schedules = repository.getAllSchedules()
+            val colorsMap = schedules.filter { it.startDateTime != null }
+                .groupBy {
+                    it.startDateTime!!.toLocalDate()
+                }.mapValues { entry ->
+                    entry.value.map { it.labelColor }
+                }
+            scheduleColorsMap.value = colorsMap
+        }
+    }
+
+    //Todo - DI
+    private val repository: ScheduleRepository = ScheduleRepository(application)
+
+    init {
+        loadSchedules()
     }
 
     fun loadSchedules() {
         viewModelScope.launch {
             val scheduleList = repository.getAllSchedules()
             Log.d("CalendarViewModel", "Loaded schedules: ${scheduleList.size}")
-            val map = scheduleList.groupBy { schedule ->
-                LocalDate.parse(schedule.startDateTime.substringBefore("T"))
-            }
+
+            val map = scheduleList.filter { it.startDateTime != null }
+                .groupBy { schedule ->
+                    schedule.startDateTime!!.toLocalDate()
+                }
             _scheduleMap.value = map
             Log.d("CalendarViewModel", "ScheduleMap updated: $_scheduleMap")
         }
@@ -97,12 +117,9 @@ class CalendarViewModel : ViewModel() {
         }
     }
 
-    private fun replaceDate(originalDateTime : String, newDate: LocalDate) : String {
-        return if (originalDateTime.contains("T")) {
-            val timePart = originalDateTime.substringAfter("T")
-            "${newDate}T$timePart"
-        } else {
-            newDate.toString()
+    private fun replaceDate(originalDateTime: LocalDateTime?, newDate: LocalDate): LocalDateTime? {
+        return originalDateTime?.let {
+            LocalDateTime.of(newDate, it.toLocalTime())
         }
     }
 

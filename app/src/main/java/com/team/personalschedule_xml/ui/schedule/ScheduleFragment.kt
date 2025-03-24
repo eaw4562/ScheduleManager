@@ -43,7 +43,6 @@ class ScheduleFragment : Fragment() {
     ): View {
         _binding = LayoutScheduleBinding.inflate(inflater, container, false)
 
-        calendarViewModel.initRepository(requireContext())
         calendarViewModel.loadSchedules()
 
         return binding.root
@@ -240,13 +239,13 @@ class ScheduleFragment : Fragment() {
         }
     }
 
+    // ScheduleFragment 내부에서 날짜 선택 후 호출
     private fun showBottomSheetFragment(data: LocalDate) {
-        val action = ScheduleFragmentDirections.actionScheduleFragmentToScheduleBottomSheetFragment(
-            selectedDate = data.toString()
-        )
+        val action = ScheduleFragmentDirections
+            .actionScheduleFragmentToScheduleBottomSheetFragment(selectedDate = data.toString())
         findNavController().navigate(action)
-        Log.d("showBottomSheetFragment", "BottomSheet tag: ScheduleBottomSheetFragment")
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
