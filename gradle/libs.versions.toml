@@ -12,7 +12,7 @@ loggingInterceptor = "4.9.3"
 material = "1.10.0"
 activity = "1.10.0"
 constraintlayout = "2.1.4"
-navigationFragmentKtx = "2.8.5"
+navigationFragmentKtx = "2.8.9"
 navigationSafeArgsGradlePlugin = "2.8.9"
 
 [libraries]

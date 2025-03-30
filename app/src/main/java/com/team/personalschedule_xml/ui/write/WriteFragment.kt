@@ -1,36 +1,26 @@
 package com.team.personalschedule_xml.ui.write
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.AlarmManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.CalendarMonth
-import com.kizitonwose.calendar.view.MonthDayBinder
-import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
-import com.team.personalschedule_xml.R
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.data.repository.ScheduleRepository
 import com.team.personalschedule_xml.databinding.LayoutWriteBinding
 import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
-import com.team.personalschedule_xml.ui.common.calendar.DayViewContainer
-import com.team.personalschedule_xml.ui.common.calendar.MonthHeaderViewContainer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -47,6 +37,7 @@ class WriteFragment : Fragment() {
     private lateinit var scheduleRepository: ScheduleRepository
     private var scheduleId: Int = -1
 
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
     private val timeFormatter = DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN)
 
     override fun onCreateView(
@@ -89,142 +80,21 @@ class WriteFragment : Fragment() {
             }
         }
 
-        // TimePicker 관찰자
-        calendarViewModel.selectedStartTime.observe(viewLifecycleOwner) { time ->
-            time?.let {
-                binding.writeBottomStartTime.hour = it.hour
-                binding.writeBottomStartTime.minute = it.minute
-                binding.writeBottomStartTimeText.text = it.format(timeFormatter)
-            }
-        }
-        calendarViewModel.selectedEndTime.observe(viewLifecycleOwner) { time ->
-            time?.let {
-                binding.writeBottomEndTime.hour = it.hour
-                binding.writeBottomEndTime.minute = it.minute
-                binding.writeBottomEndTimeText.text = it.format(timeFormatter)
+        binding.writeBottomStartDateText.setOnClickListener { showStartDatePicker() }
+        binding.writeBottomStartTimeText.setOnClickListener { showStartTimePicker() }
+        binding.writeBottomEndDateText.setOnClickListener { showEndDatePicker() }
+        binding.writeBottomEndTimeText.setOnClickListener { showEndTimePicker() }
+
+        binding.writeBottomAllDaySwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.writeBottomStartTimeText.visibility = View.GONE
+                binding.writeBottomEndTimeText.visibility = View.GONE
+            } else {
+                binding.writeBottomStartTimeText.visibility = View.VISIBLE
+                binding.writeBottomEndTimeText.visibility = View.VISIBLE
             }
         }
 
-        // 시작 캘린더 설정
-        binding.writeBottomStartCalendar.apply {
-            val currentMonth = YearMonth.now()
-            val startMonth = currentMonth.minusMonths(12)
-            val endMonth = currentMonth.plusMonths(12)
-            setup(startMonth, endMonth, DayOfWeek.SUNDAY)
-            scrollToMonth(currentMonth)
-        }
-        binding.writeBottomStartCalendar.monthHeaderBinder = object :
-            MonthHeaderFooterBinder<MonthHeaderViewContainer> {
-            override fun bind(container: MonthHeaderViewContainer, data: CalendarMonth) {
-                val formatter = DateTimeFormatter.ofPattern("yy년 M월")
-                container.binding.monthHeaderText.text = data.yearMonth.format(formatter)
-            }
-            override fun create(view: View): MonthHeaderViewContainer {
-                return MonthHeaderViewContainer(view)
-            }
-        }
-        binding.writeBottomStartCalendar.dayBinder = object : MonthDayBinder<DayViewContainer> {
-            override fun bind(container: DayViewContainer, data: CalendarDay) {
-                container.day = data
-                container.binding.tvDay.text = data.date.dayOfMonth.toString()
-                if (calendarViewModel.selectedStartDate.value == data.date) {
-                    container.binding.tvDay.setBackgroundResource(R.drawable.current_day_curcle)
-                } else {
-                    container.binding.tvDay.background = null
-                }
-                container.view.setOnClickListener {
-                    calendarViewModel.selectStartDate(data.date)
-                }
-            }
-            override fun create(view: View): DayViewContainer {
-                return DayViewContainer(view)
-            }
-        }
-
-        // 종료 캘린더 설정
-        binding.writeBottomEndCalendar.apply {
-            val currentMonth = YearMonth.now()
-            val startMonth = currentMonth.minusMonths(12)
-            val endMonth = currentMonth.plusMonths(12)
-            setup(startMonth, endMonth, DayOfWeek.SUNDAY)
-            scrollToMonth(currentMonth)
-        }
-        binding.writeBottomEndCalendar.monthHeaderBinder = object :
-            MonthHeaderFooterBinder<MonthHeaderViewContainer> {
-            override fun bind(container: MonthHeaderViewContainer, data: CalendarMonth) {
-                val formatter = DateTimeFormatter.ofPattern("yy년 M월")
-                container.binding.monthHeaderText.text = data.yearMonth.format(formatter)
-            }
-            override fun create(view: View): MonthHeaderViewContainer {
-                return MonthHeaderViewContainer(view)
-            }
-        }
-        binding.writeBottomEndCalendar.dayBinder = object : MonthDayBinder<DayViewContainer> {
-            override fun bind(container: DayViewContainer, data: CalendarDay) {
-                container.day = data
-                container.binding.tvDay.text = data.date.dayOfMonth.toString()
-                if (calendarViewModel.selectedEndDate.value == data.date) {
-                    container.binding.tvDay.setBackgroundResource(R.drawable.current_day_curcle)
-                } else {
-                    container.binding.tvDay.background = null
-                }
-                container.view.setOnClickListener {
-                    calendarViewModel.selectEndDate(data.date)
-                    Log.d("WriteFragment", "Selected EndDate: ${calendarViewModel.selectedEndDate.value}")
-                }
-            }
-            override fun create(view: View): DayViewContainer {
-                return DayViewContainer(view)
-            }
-        }
-
-        // LiveData 관찰: 캘린더 갱신
-        calendarViewModel.selectedStartDate.observe(viewLifecycleOwner) {
-            binding.writeBottomStartCalendar.notifyCalendarChanged()
-            Log.d("WriteFragment", "Updated selectedStartDate: ${calendarViewModel.selectedStartDate.value}")
-        }
-        calendarViewModel.selectedEndDate.observe(viewLifecycleOwner) {
-            binding.writeBottomEndCalendar.notifyCalendarChanged()
-            Log.d("WriteFragment", "Updated selectedEndDate: ${calendarViewModel.selectedEndDate.value}")
-        }
-
-        // UI 이벤트 처리
-        binding.writeBottomStartDateText.setOnClickListener {
-            toggleView(binding.writeBottomStartCalendar)
-        }
-        binding.writeBottomStartTimeText.setOnClickListener {
-            toggleView(binding.writeBottomStartTime)
-            toggleView(binding.writeBottomStartTimeConfirmBtn)
-        }
-        binding.writeBottomStartTime.setOnTimeChangedListener { _, hour, minute ->
-            val time = LocalTime.of(hour, minute)
-            binding.writeBottomStartTimeText.text = time.format(timeFormatter)
-        }
-        binding.writeBottomStartTimeConfirmBtn.setOnClickListener {
-            val hour = binding.writeBottomStartTime.hour
-            val minute = binding.writeBottomStartTime.minute
-            calendarViewModel.selectStartTime(LocalTime.of(hour, minute))
-            toggleView(binding.writeBottomStartTime)
-            toggleView(binding.writeBottomStartTimeConfirmBtn)
-        }
-        binding.writeBottomEndDateText.setOnClickListener {
-            toggleView(binding.writeBottomEndCalendar)
-        }
-        binding.writeBottomEndTimeText.setOnClickListener {
-            toggleView(binding.writeBottomEndTime)
-            toggleView(binding.writeBottomEndTimeConfirmBtn)
-        }
-        binding.writeBottomEndTime.setOnTimeChangedListener { _, hour, minute ->
-            val time = LocalTime.of(hour, minute)
-            binding.writeBottomEndTimeText.text = time.format(timeFormatter)
-        }
-        binding.writeBottomEndTimeConfirmBtn.setOnClickListener {
-            val hour = binding.writeBottomEndTime.hour
-            val minute = binding.writeBottomEndTime.minute
-            calendarViewModel.selectEndTime(LocalTime.of(hour, minute))
-            toggleView(binding.writeBottomEndTime)
-            toggleView(binding.writeBottomEndTimeConfirmBtn)
-        }
         binding.bottomWriteLabelLayout.setOnClickListener {
             if (childFragmentManager.findFragmentByTag("ColorPickerBottomSheet") == null) {
                 val colorPicker = ColorPickerBottomSheet()
@@ -247,6 +117,78 @@ class WriteFragment : Fragment() {
             Log.d("WriteFragment", "Save button clicked")
             saveScheduleToDb()
         }
+    }
+
+    private fun showStartDatePicker() {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("시작 날짜 선택")
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selection ->
+            val localDate = Instant.ofEpochMilli(selection)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+
+            calendarViewModel.selectStartDate(localDate)
+
+            // 만약 '종일' 스위치가 OFF라면 시간도 선택
+            if (!binding.writeBottomAllDaySwitch.isChecked) {
+                showStartTimePicker()
+            }
+        }
+        datePicker.show(childFragmentManager, "START_DATE_PICKER")
+    }
+
+    private fun showStartTimePicker() {
+        if (binding.writeBottomAllDaySwitch.isChecked) {
+            // 종일인 경우 시간 선택 안 함
+            return
+        }
+        val timePicker = MaterialTimePicker.Builder()
+            .setTitleText("시작 시간 선택")
+            .setTimeFormat(TimeFormat.CLOCK_12H) // or CLOCK_24H
+            .build()
+
+        timePicker.addOnPositiveButtonClickListener {
+            val selectedTime = LocalTime.of(timePicker.hour, timePicker.minute)
+            calendarViewModel.selectStartTime(selectedTime)
+        }
+        timePicker.show(childFragmentManager, "START_TIME_PICKER")
+    }
+
+    private fun showEndDatePicker() {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("종료 날짜 선택")
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selection ->
+            val localDate = Instant.ofEpochMilli(selection)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+
+            calendarViewModel.selectEndDate(localDate)
+
+            if (!binding.writeBottomAllDaySwitch.isChecked) {
+                showEndTimePicker()
+            }
+        }
+        datePicker.show(childFragmentManager, "END_DATE_PICKER")
+    }
+
+    private fun showEndTimePicker() {
+        if (binding.writeBottomAllDaySwitch.isChecked) {
+            return
+        }
+        val timePicker = MaterialTimePicker.Builder()
+            .setTitleText("종료 시간 선택")
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .build()
+
+        timePicker.addOnPositiveButtonClickListener {
+            val selectedTime = LocalTime.of(timePicker.hour, timePicker.minute)
+            calendarViewModel.selectEndTime(selectedTime)
+        }
+        timePicker.show(childFragmentManager, "END_TIME_PICKER")
     }
 
     private fun loadScheduleData(schedule: Schedule) {

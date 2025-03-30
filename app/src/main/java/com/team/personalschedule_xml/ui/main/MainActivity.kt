@@ -1,5 +1,6 @@
 package com.team.personalschedule_xml.ui.main
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,23 +11,32 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.View
+import android.widget.PopupMenu
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.databinding.ActivityMainBinding
+import com.team.personalschedule_xml.utils.PreferencesUtil
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
+
     private val requestExactAlarmPermission =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             checkExactAlarmPermission()
@@ -56,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
         }*/
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -68,6 +79,9 @@ class MainActivity : AppCompatActivity() {
         }
         initNavigation()
         createNotificationChannel()
+
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val currentMode = prefs.getString("current_mode", "month") ?: "month"
 
         intent?.let {
             val scheduleId = it.getIntExtra("scheduleId", -1)
@@ -82,34 +96,41 @@ class MainActivity : AppCompatActivity() {
         }
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
+
+        val startDest = PreferencesUtil.getStartDestination(this)
+        binding.navBar.selectedItemId = when (startDest) {
+            "month" -> R.id.scheduleFragment
+            "week" -> R.id.scheduleWeekFragment
+            "list" -> R.id.scheduleListFragment
+            else -> R.id.scheduleFragment
+        }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_bar)
+        val menuView = bottomNavigationView.getChildAt(0) as BottomNavigationMenuView
+
+        val scheduleItemIndex = 0
+        val scheduleItemView = menuView.getChildAt(scheduleItemIndex) as BottomNavigationItemView
+
+        scheduleItemView.setOnLongClickListener {
+            showSchedulePopup(it, currentMode)
+            true
+        }
 
         binding.navBar.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.scheduleFragment -> {
-                    navController.navigate(R.id.scheduleFragment)
-                    true
-                }
-                R.id.memoFragment -> {
-                    navController.navigate(R.id.memoFragment)
-                    true
-                }
-                R.id.writeBottomSheet -> {
-                    navController.navigate(R.id.writeFragment)
-                    true
-                }
-                R.id.notificationFragment -> {
-                    navController.navigate(R.id.notificationFragment)
-                    true
-                }
-                R.id.settingsFragment -> {
-                    navController.navigate(R.id.settingsFragment)
-                    true
-                }
-                else -> false
+            val (mode, destinationId) = when (item.itemId) {
+                R.id.scheduleFragment -> "month" to R.id.scheduleFragment
+                R.id.scheduleWeekFragment -> "week" to R.id.scheduleWeekFragment
+                R.id.scheduleListFragment -> "list" to R.id.scheduleListFragment
+                R.id.memoFragment -> null to R.id.memoFragment
+                R.id.writeBottomSheet -> null to R.id.writeFragment
+                R.id.notificationFragment -> null to R.id.notificationFragment
+                R.id.settingsFragment -> null to R.id.settingsFragment
+                else -> return@setOnItemSelectedListener false
             }
+            mode?.let { updateCurrentMode(it) }
+            navController.navigate(destinationId)
+            true
         }
         checkExactAlarmPermission()
         checkNotificationPermission()
@@ -254,6 +275,66 @@ class MainActivity : AppCompatActivity() {
                 .show()
         }
     }
+
+    @SuppressLint("RestrictedApi") // 내부 API 사용 경고 무시
+    private fun showSchedulePopup(anchorView: View, currentMode: String) {
+        val startDest = PreferencesUtil.getStartDestination(this)
+
+        val popup = PopupMenu(this, anchorView)
+        popup.menuInflater.inflate(R.menu.schedule_popup_menu, popup.menu)
+
+        // 1) 아이콘 표시 강제 활성화 (MenuBuilder 사용)
+        val menu = popup.menu
+        if (menu is androidx.appcompat.view.menu.MenuBuilder) {
+            menu.setOptionalIconsVisible(true)
+        }
+
+        // 2) 현재 모드(월간/주간/리스트)에 따라 체크 표시
+        when (startDest) {
+            "month" -> popup.menu.findItem(R.id.menu_month)?.isChecked = true
+            "week" -> popup.menu.findItem(R.id.menu_week)?.isChecked = true
+            "list" -> popup.menu.findItem(R.id.menu_list)?.isChecked = true
+        }
+
+        // 3) 메뉴 아이템 클릭 처리
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_month -> {
+                    // "월간" 클릭 시 처리
+                    menuItem.isChecked = true
+                    navController.navigate(R.id.scheduleFragment)
+                    updateCurrentMode("month")
+                    true
+                }
+                R.id.menu_week -> {
+                    // "주간" 클릭 시 처리
+                    menuItem.isChecked = true
+                    navController.navigate(R.id.scheduleWeekFragment)
+                    updateCurrentMode("week")
+                    true
+                }
+                R.id.menu_list -> {
+                    // "리스트" 클릭 시 처리
+                    menuItem.isChecked = true
+                    navController.navigate(R.id.scheduleListFragment)
+                    updateCurrentMode("list")
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // 팝업 표시
+        popup.show()
+    }
+
+    private fun updateCurrentMode(mode: String) {
+        // SharedPreferences에 저장
+        PreferencesUtil.setStartDestination(this, mode)
+        Log.d("MainActivity", "Updated startDestination: $mode")
+    }
+
+
 
     /*private fun showWriteBottomSheet() {
         if (supportFragmentManager.findFragmentByTag("WriteBottomSheet") == null){
