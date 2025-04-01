@@ -1,5 +1,6 @@
 package com.team.personalschedule_xml.data.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -23,4 +24,10 @@ interface ScheduleDao {
 
     @Query("DELETE FROM SCHEDULE WHERE id = :id")
     suspend fun deleteSchedule(id: Int)
+
+    @Query("SELECT * FROM schedule ORDER BY startDateTime ASC")
+    fun getAllSchedulesLive(): LiveData<List<Schedule>>
+
+    @Query("SELECT * FROM schedule ORDER BY startDateTime ASC")
+    suspend fun getAllSchedulesOrdered(): List<Schedule>
 }

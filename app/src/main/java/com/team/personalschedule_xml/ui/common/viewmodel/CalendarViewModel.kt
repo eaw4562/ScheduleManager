@@ -3,15 +3,18 @@ package com.team.personalschedule_xml.ui.common.viewmodel
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import android.view.animation.Transformation
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.CalendarLabel
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.data.repository.ScheduleRepository
+import com.team.personalschedule_xml.ui.schedule.ScheduleListItem
 import com.team.personalschedule_xml.utils.constants.AlarmConstants
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -83,6 +86,24 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
 
     //Todo - DI
     private val repository: ScheduleRepository = ScheduleRepository(application)
+
+    val allSchedules: LiveData<Map<LocalDate, List<Schedule>>> =
+        repository.getAllSchedulesLive().map { schedueles ->
+            schedueles.groupBy { it.startDateTime?.toLocalDate() ?: LocalDate.now() }
+        }
+
+    fun transformScheduleList(scheduleMap: Map<LocalDate, List<Schedule>>): List<ScheduleListItem> {
+        val list = mutableListOf<ScheduleListItem>()
+        val sortedMap = scheduleMap.toSortedMap()
+
+        sortedMap.forEach { (date, schedules) ->
+            list.add(ScheduleListItem.Header(date, date == LocalDate.now()))
+            schedules.sortedBy { it.startDateTime }.forEach { schedule ->
+                list.add(ScheduleListItem.ScheduleItem(schedule))
+            }
+        }
+        return list
+    }
 
     init {
         loadSchedules()

@@ -56,16 +56,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    /*private val requestNotificationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (!isGranted) {
-                Log.d("MainActivity", "POST_NOTIFICATIONS permission denied")
-                showNotificationPermissionDeniedDialog()
-            } else {
-                Log.d("MainActivity", "POST_NOTIFICATIONS permission granted")
-            }
-        }*/
-
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,20 +108,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.navBar.setOnItemSelectedListener { item ->
-            val (mode, destinationId) = when (item.itemId) {
-                R.id.scheduleFragment -> "month" to R.id.scheduleFragment
-                R.id.scheduleWeekFragment -> "week" to R.id.scheduleWeekFragment
-                R.id.scheduleListFragment -> "list" to R.id.scheduleListFragment
-                R.id.memoFragment -> null to R.id.memoFragment
-                R.id.writeBottomSheet -> null to R.id.writeFragment
-                R.id.notificationFragment -> null to R.id.notificationFragment
-                R.id.settingsFragment -> null to R.id.settingsFragment
+            val destinationId = when (item.itemId) {
+                R.id.scheduleFragment -> {
+                    when (PreferencesUtil.getStartDestination(this)) {
+                        "month" -> R.id.scheduleFragment
+                        "week" -> R.id.scheduleWeekFragment
+                        "list" -> R.id.scheduleListFragment
+                        else -> R.id.scheduleFragment
+                    }
+                }
+                R.id.memoFragment -> R.id.memoFragment
+                R.id.writeBottomSheet -> R.id.writeFragment
+                R.id.notificationFragment -> R.id.notificationFragment
+                R.id.settingsFragment -> R.id.settingsFragment
                 else -> return@setOnItemSelectedListener false
             }
-            mode?.let { updateCurrentMode(it) }
-            navController.navigate(destinationId)
+
+            if (navController.currentDestination?.id != destinationId) {
+                navController.navigate(destinationId)
+            }
             true
-        }
+    }
         checkExactAlarmPermission()
         checkNotificationPermission()
     }
@@ -302,6 +299,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_month -> {
                     // "월간" 클릭 시 처리
                     menuItem.isChecked = true
+                    binding.navBar.selectedItemId = R.id.scheduleFragment
                     navController.navigate(R.id.scheduleFragment)
                     updateCurrentMode("month")
                     true
@@ -309,6 +307,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_week -> {
                     // "주간" 클릭 시 처리
                     menuItem.isChecked = true
+                    binding.navBar.selectedItemId = R.id.scheduleWeekFragment
                     navController.navigate(R.id.scheduleWeekFragment)
                     updateCurrentMode("week")
                     true
@@ -316,6 +315,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_list -> {
                     // "리스트" 클릭 시 처리
                     menuItem.isChecked = true
+                    binding.navBar.selectedItemId = R.id.scheduleListFragment
                     navController.navigate(R.id.scheduleListFragment)
                     updateCurrentMode("list")
                     true
@@ -333,13 +333,4 @@ class MainActivity : AppCompatActivity() {
         PreferencesUtil.setStartDestination(this, mode)
         Log.d("MainActivity", "Updated startDestination: $mode")
     }
-
-
-
-    /*private fun showWriteBottomSheet() {
-        if (supportFragmentManager.findFragmentByTag("WriteBottomSheet") == null){
-            val bottomSheet = WriteBottomSheet()
-            bottomSheet.show(supportFragmentManager, "WriteBottomSheet")
-        }
-    }*/
 }

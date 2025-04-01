@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.schedule.ScheduleListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/scheduleRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:padding="16dp"
+        tools:listitem="@layout/layout_schedule_list_item" />
 
 </FrameLayout>
