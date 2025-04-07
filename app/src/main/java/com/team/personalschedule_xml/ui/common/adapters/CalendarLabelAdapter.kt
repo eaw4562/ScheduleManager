@@ -25,7 +25,7 @@ class CalendarLabelAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarLabelViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_calendar_label_item, parent, false)
+            .inflate(R.layout.item_calendar_label, parent, false)
         return CalendarLabelViewHolder(view)
     }
 

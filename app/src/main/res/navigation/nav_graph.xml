@@ -63,7 +63,12 @@
         android:id="@+id/memoFragment"
         android:name="com.team.personalschedule_xml.ui.memo.MemoFragment"
         android:label="MemoFragment"
-        tools:layout="@layout/layout_memo"/>
+        tools:layout="@layout/layout_memo">
+        <action
+            android:id="@+id/action_memoFragment_to_scheduleDetailFragment"
+            app:destination="@id/scheduleDetailFragment"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/notificationFragment"
@@ -137,6 +142,10 @@
         <argument
             android:name="scheduleId"
             app:argType="integer" />
+        <argument
+            android:name="isMemo"
+            app:argType="boolean"
+            android:defaultValue="false"/>
         <action
             android:id="@+id/action_scheduleDetailFragment_to_writeFragment"
             app:destination="@id/writeFragment">

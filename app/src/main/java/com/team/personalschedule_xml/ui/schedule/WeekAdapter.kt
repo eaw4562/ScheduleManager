@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.Schedule
-import com.team.personalschedule_xml.databinding.LayoutWeekDayItemBinding
+import com.team.personalschedule_xml.databinding.ItemWeekDayBinding
 import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,7 +31,7 @@ class WeekAdapter(
     private val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREAN)
 
     class WeekViewHolder(
-        private val binding: LayoutWeekDayItemBinding,
+        private val binding: ItemWeekDayBinding,
         private val onDayClick: (LocalDate, Boolean) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(date: LocalDate, isSelected: Boolean, schedules: List<Schedule>) {
@@ -89,7 +89,7 @@ class WeekAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeekViewHolder {
-        val binding = LayoutWeekDayItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemWeekDayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return WeekViewHolder(binding, onDayClick)
     }
 

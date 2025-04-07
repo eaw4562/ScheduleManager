@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,10 +13,12 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.team.personalschedule_xml.data.model.Memo
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.data.repository.ScheduleRepository
 import com.team.personalschedule_xml.databinding.LayoutWriteBinding
 import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
+import com.team.personalschedule_xml.ui.memo.MemoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,6 +42,9 @@ class WriteFragment : Fragment() {
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
     private val timeFormatter = DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN)
+    val memoViewModel: MemoViewModel by activityViewModels()
+
+    private var isMemo : Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -115,7 +121,21 @@ class WriteFragment : Fragment() {
         }
         binding.writeBottomSaveText.setOnClickListener {
             Log.d("WriteFragment", "Save button clicked")
-            saveScheduleToDb()
+            if (isMemo) {
+                saveMemoToDb()
+            }else {
+                saveScheduleToDb()
+            }
+        }
+
+        binding.writeBottomMemoSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                isMemo = true
+                binding.writeBottomDateLayout.visibility = View.GONE
+            } else{
+                isMemo = false
+                binding.writeBottomDateLayout.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -209,6 +229,28 @@ class WriteFragment : Fragment() {
         Log.d("WriteFragment", "Loaded schedule; isEndTimeAutoSync: ${calendarViewModel.isEndTimeAutoSync}")
     }
 
+    private fun saveMemoToDb() {
+        Log.d("WriteFragment", "saveMemoToDb() called")
+
+
+        val title = binding.writeBottomTitleEdit.text.toString()
+        val labelColor = calendarViewModel.selectedLabel.value?.color ?: 0
+        val labelName = calendarViewModel.selectedLabel.value?.colorName ?: ""
+        val content = binding.memoText.text.toString()
+        if (title.isBlank()) {
+            Toast.makeText(requireContext(), "제목을 입력해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val memo = Memo(
+            title = title,
+            memo = content,
+            labelName = labelName,
+            labelColorResId = labelColor)
+
+        memoViewModel.insertMemo(memo)
+        findNavController().popBackStack()
+    }
+
     private fun saveScheduleToDb() {
         Log.d("WriteFragment", "saveScheduleToDb() called")
         val title = binding.writeBottomTitleEdit.text.toString()
@@ -258,7 +300,6 @@ class WriteFragment : Fragment() {
                 }
                 withContext(Dispatchers.Main) {
                     calendarViewModel.loadSchedules()
-                    // Alarm 예약 코드는 필요시 활성화
                     findNavController().popBackStack()
                 }
             } catch (e: Exception) {

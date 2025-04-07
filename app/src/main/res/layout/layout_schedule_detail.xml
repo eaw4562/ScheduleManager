@@ -48,6 +48,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/schedule_detail_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
@@ -56,103 +57,112 @@
                 app:textColorFromResource="@{schedule.labelColor}"/>
 
             <LinearLayout
+                android:id="@+id/schedule_detail_more_layout"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:orientation="horizontal">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:layout_gravity="center"
-                        android:textStyle="bold"
-                        tools:text="2025.3.19"
-                        android:textSize="18sp"
-                        app:formattedMoreDetailDate="@{schedule.startDateTime}" />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
 
-                    <TextView
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            tools:text="2025.3.19"
+                            android:textSize="18sp"
+                            app:formattedMoreDetailDate="@{schedule.startDateTime}" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="24sp"
+                            android:layout_marginTop="5dp"
+                            app:formattedMoreDetailTime="@{schedule.startDateTime}"
+                            tools:text="오후 1:00" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/baseline_keyboard_arrow_right_24"/>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:layout_gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="24sp"
-                        android:layout_marginTop="5dp"
-                        app:formattedMoreDetailTime="@{schedule.startDateTime}"
-                        tools:text="오후 1:00" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_gravity="center"
+                            tools:text="2025.3.19"
+                            android:textSize="18sp"
+                            app:formattedMoreDetailDate="@{schedule.endDateTime}" />
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_gravity="center"
+                            android:textSize="24sp"
+                            android:layout_marginTop="5dp"
+                            app:formattedMoreDetailTime="@{schedule.endDateTime}"
+                            tools:text="오후 1:00" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/baseline_keyboard_arrow_right_24"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_guid_gray"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/baseline_access_alarm_24"
+                        android:layout_marginStart="10dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:layout_gravity="center"
-                        tools:text="2025.3.19"
-                        android:textSize="18sp"
-                        app:formattedMoreDetailDate="@{schedule.endDateTime}" />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:layout_gravity="center"
-                        android:textSize="24sp"
-                        android:layout_marginTop="5dp"
-                        app:formattedMoreDetailTime="@{schedule.endDateTime}"
-                        tools:text="오후 1:00" />
+                        android:textSize="20sp"
+                        android:text="@{schedule.alarm}"/>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_guid_gray"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/baseline_access_alarm_24"
-                    android:layout_marginStart="10dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="@{schedule.alarm}"/>
-
-            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -174,11 +184,40 @@
                     android:layout_marginStart="10dp"/>
 
                 <TextView
+                    android:id="@+id/schedule_detail_colorLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:layout_gravity="center"
                     android:text="@{schedule.labelName}"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_guid_gray"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/baseline_text_snippet_24"
+                    android:layout_marginStart="10dp"/>
+
+                <TextView
+                    android:id="@+id/schedule_detail_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:layout_gravity="center" />
 
             </LinearLayout>
 

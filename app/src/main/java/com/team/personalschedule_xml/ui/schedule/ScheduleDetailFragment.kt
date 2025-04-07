@@ -12,10 +12,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.team.personalschedule_xml.R
+import com.team.personalschedule_xml.data.model.Memo
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.data.repository.ScheduleRepository
 import com.team.personalschedule_xml.databinding.LayoutScheduleDetailBinding
 import com.team.personalschedule_xml.ui.common.viewmodel.CalendarViewModel
+import com.team.personalschedule_xml.ui.memo.MemoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,11 +30,15 @@ class ScheduleDetailFragment : Fragment() {
     private val calendarViewModel: CalendarViewModel by activityViewModels()
     private lateinit var scheduleRepository: ScheduleRepository
     private var scheduleId: Int = -1
+    private var isMemo : Boolean = false
+    private val memoViewModel : MemoViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scheduleId = ScheduleDetailFragmentArgs.fromBundle(requireArguments()).scheduleId
+        isMemo = ScheduleDetailFragmentArgs.fromBundle(requireArguments()).isMemo
         Log.d("ScheduleDetailFragment", "Schedule ID: $scheduleId")
+        Log.d("ScheduleDetailFragment", "Schedule isMemo: $isMemo")
     }
 
     override fun onCreateView(
@@ -49,6 +55,23 @@ class ScheduleDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (isMemo) {
+            binding.scheduleDetailMoreLayout.visibility = View.GONE
+            memoViewModel.memoList.observe(viewLifecycleOwner) { memos ->
+                val memo = memos.find { it.id == scheduleId } ?: return@observe
+                Log.d("ScheduleDetailFragment : ", "Memo -> " + memo.memo)
+                bindMemoToUI(memo)
+            }
+        } else {
+            binding.scheduleDetailMoreLayout.visibility = View.VISIBLE
+            calendarViewModel.scheduleMap.observe(viewLifecycleOwner) { scheduleMap ->
+                val schedule = scheduleMap.values.flatten().find { it.id == scheduleId }
+                schedule?.let {
+                   bindScheduleToUI(schedule)
+                }
+            }
+        }
 
         if (scheduleId != -1) {
             loadScheduleDetails()
@@ -78,6 +101,18 @@ class ScheduleDetailFragment : Fragment() {
                 findNavController().popBackStack()
             }
         }
+    }
+
+    private fun bindMemoToUI(memo : Memo) {
+        binding.scheduleDetailTitle.text = memo.title
+        binding.scheduleDetailColorLabel.text = memo.labelName
+        binding.scheduleDetailContent.text = memo.memo
+    }
+
+    private fun bindScheduleToUI(schedule: Schedule) {
+        binding.scheduleDetailTitle.text = schedule.title
+        binding.scheduleDetailColorLabel.text = schedule.labelName
+        binding.scheduleDetailContent.text = schedule.memo
     }
 
     private fun showPopupMenu(view: View) {

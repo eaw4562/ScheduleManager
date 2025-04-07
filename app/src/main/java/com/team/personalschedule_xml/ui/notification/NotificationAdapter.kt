@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.team.personalschedule_xml.data.model.ActionType
 import com.team.personalschedule_xml.data.model.Notification
-import com.team.personalschedule_xml.databinding.LayoutNotificationItemBinding
+import com.team.personalschedule_xml.databinding.ItemNotificationBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -18,7 +18,7 @@ class NotificationAdapter(
     private val onItemClick : (Notification) -> Unit
 ) : RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-    inner class NotificationViewHolder(private val binding : LayoutNotificationItemBinding) :
+    inner class NotificationViewHolder(private val binding : ItemNotificationBinding) :
     RecyclerView.ViewHolder(binding.root){
 
         fun bind(notification : Notification) {
@@ -82,7 +82,7 @@ class NotificationAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
-        val binding = LayoutNotificationItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemNotificationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NotificationViewHolder(binding)
     }
 
