@@ -4,7 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="calenderBackground">#262626</color>
     <color name="light_gray">#393939</color>
-    <color name="light_guid_gray">#9D9797</color>
+    <color name="light_guid_gray">#AAA6A6</color>
+    <color name="settingBackground">#E0E0E0</color>
     <color name="emerald_green">#008d62</color>
     <color name="modern_color">#0ef7ff</color>
     <color name="deepskyblue">#00BFFF</color>

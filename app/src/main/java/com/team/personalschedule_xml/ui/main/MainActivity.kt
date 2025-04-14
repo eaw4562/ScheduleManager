@@ -31,8 +31,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.databinding.ActivityMainBinding
 import com.team.personalschedule_xml.utils.PreferencesUtil
+import com.team.personalschedule_xml.utils.interfaces.OnScheduleModeChangedListener
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnScheduleModeChangedListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -332,5 +333,23 @@ class MainActivity : AppCompatActivity() {
         // SharedPreferences에 저장
         PreferencesUtil.setStartDestination(this, mode)
         Log.d("MainActivity", "Updated startDestination: $mode")
+    }
+
+    override fun onScheduleModeChange(mode: String) {
+        updateCurrentMode(mode)
+        Log.d("MainActivity", "onScheduleModeChange Call$mode")
+
+        val destinationId = when(mode) {
+            "month" -> R.id.scheduleFragment
+            "week" -> R.id.scheduleWeekFragment
+            "list" -> R.id.scheduleListFragment
+            else -> R.id.scheduleFragment
+        }
+
+        binding.navBar.selectedItemId = destinationId
+
+        if (navController.currentDestination?.id != destinationId) {
+            navController.navigate(destinationId)
+        }
     }
 }
