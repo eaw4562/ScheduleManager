@@ -30,4 +30,7 @@ interface ScheduleDao {
 
     @Query("SELECT * FROM schedule ORDER BY startDateTime ASC")
     suspend fun getAllSchedulesOrdered(): List<Schedule>
+
+    @Query("SELECT * FROM schedule WHERE title LIKE '%' || :keyword || '%' ORDER BY startDateTime ASC")
+    fun searchSchedules(keyword : String) : LiveData<List<Schedule>>
 }

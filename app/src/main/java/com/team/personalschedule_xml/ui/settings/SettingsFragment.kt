@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.databinding.LayoutSettingsBinding
+import com.team.personalschedule_xml.ui.schedule.ScheduleBottomSheetFragmentDirections
 import com.team.personalschedule_xml.utils.PreferencesUtil
 import com.team.personalschedule_xml.utils.interfaces.OnScheduleModeChangedListener
 
@@ -67,6 +69,12 @@ class SettingsFragment : Fragment() {
             binding.radioList.isChecked = true
             PreferencesUtil.setStartDestination(requireContext(), "list")
             modeListener.onScheduleModeChange("list")
+        }
+
+        binding.settingSearchLayout.setOnClickListener {
+            val action = SettingsFragmentDirections
+                .actionSettingsFragmentToScheduleSearchFragment()
+            findNavController().navigate(action)
         }
     }
 }

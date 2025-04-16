@@ -14,10 +14,6 @@ import com.team.personalschedule_xml.data.model.Notification
 import com.team.personalschedule_xml.data.model.Schedule
 import com.team.personalschedule_xml.utils.AlarmScheduler
 import com.team.personalschedule_xml.utils.constants.AlarmConstants
-import com.team.personalschedule_xml.utils.receiver.AlarmReceiver
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 class ScheduleRepository(private val context : Context) {
     private val db = Room.databaseBuilder(
@@ -100,5 +96,9 @@ class ScheduleRepository(private val context : Context) {
         scheduleDao.deleteSchedule(id)
         //cancelAlarms(id) // 일정 삭제 시 알림 취소
         AlarmScheduler.cancelAlarms(context, id)
+    }
+
+    fun searchSchedules(keyword : String) : LiveData<List<Schedule>> {
+        return scheduleDao.searchSchedules(keyword)
     }
 }

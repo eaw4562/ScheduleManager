@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#F9F9F9"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025년 4월 14일 (월)"
+        android:textColor="#4A4A4A"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1건의 일정"
+        android:textColor="#A4A4A4"
+        android:textSize="14sp"/>
+</LinearLayout>

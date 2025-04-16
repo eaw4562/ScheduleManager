@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.team.personalschedule_xml.R
 import com.team.personalschedule_xml.data.model.CalendarLabel
@@ -262,5 +263,18 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         } else {
             selected.joinToString(separator = ", ") + " 알림이 설정되어 있습니다"
         }
+    }
+
+    private val _searchKeyword = MutableLiveData<String>("")
+
+    val filteredSchedules : LiveData<Map<LocalDate, List<Schedule>>> =
+        _searchKeyword.switchMap { keyword ->
+            repository.searchSchedules(keyword).map { schedules ->
+                schedules.groupBy { it.startDateTime?.toLocalDate() ?: LocalDate.now() }
+            }
+        }
+
+    fun setSearchKeyword(keyword : String) {
+        _searchKeyword.value = keyword
     }
 }
