@@ -37,7 +37,12 @@ class ScheduleSearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = SearchListAdapter()
+        adapter = SearchListAdapter { searchItem ->
+            val scheduleId = searchItem.schedule.id
+
+            val action = ScheduleSearchFragmentDirections.actionScheduleSearchFragmentToScheduleDetailFragment(scheduleId)
+            findNavController().navigate(action)
+        }
         binding.rvSearchHistory.adapter = adapter
         binding.rvSearchHistory.layoutManager = LinearLayoutManager(requireContext())
 

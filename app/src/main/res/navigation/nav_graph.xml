@@ -170,7 +170,14 @@
     <fragment
         android:id="@+id/scheduleSearchFragment"
         android:name="com.team.personalschedule_xml.ui.settings.ScheduleSearchFragment">
-
+        <action
+            android:id="@+id/action_scheduleSearchFragment_to_scheduleDetailFragment"
+            app:destination="@id/scheduleDetailFragment">
+            <argument
+                android:name="scheduleId"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </action>
     </fragment>
 
     <action

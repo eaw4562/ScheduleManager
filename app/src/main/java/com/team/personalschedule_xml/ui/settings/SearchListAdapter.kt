@@ -13,7 +13,9 @@ import com.team.personalschedule_xml.ui.schedule.DiffCallback
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class SearchListAdapter : ListAdapter<SearchListItem, RecyclerView.ViewHolder>(DiffCallback()) {
+class SearchListAdapter(
+    private val onItemClick : (SearchListItem.SearchItem) -> Unit
+) : ListAdapter<SearchListItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     companion object {
         private const val TYPE_HEADER = 0
@@ -67,6 +69,10 @@ class SearchListAdapter : ListAdapter<SearchListItem, RecyclerView.ViewHolder>(D
             tvTitle.text = schedule.title
             tvTime.text = "${schedule.startDateTime?.toLocalTime()} - ${schedule.endDateTime?.toLocalTime()}"
             colorBar.setBackgroundColor(ContextCompat.getColor(itemView.context, schedule.labelColor))
+
+            itemView.setOnClickListener {
+                onItemClick(item)
+            }
         }
     }
 
